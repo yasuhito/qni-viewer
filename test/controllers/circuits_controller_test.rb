@@ -8,6 +8,7 @@ class CircuitsControllerTest < ActionDispatch::IntegrationTest
 
     amplitudes = JSON.parse(@response.body)
 
+    assert_equal 2, amplitudes.length
     assert_equal 1 / Math.sqrt(2), amplitudes[0]['real']
     assert_equal 0, amplitudes[0]['imag']
     assert_equal 1 / Math.sqrt(2), amplitudes[1]['real']
