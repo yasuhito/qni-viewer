@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
+  root to: 'circuits#show'
   get '/circuit/(:json)', to: 'circuits#show', as: :circuit, xhr: true
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
