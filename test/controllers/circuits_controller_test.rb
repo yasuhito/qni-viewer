@@ -4,7 +4,7 @@ require 'test_helper'
 
 class CircuitsControllerTest < ActionDispatch::IntegrationTest
   test 'ゲートなし 1 qubit の回路を計算' do
-    get circuit_path, params: { qubitCount: 1 }, as: :json
+    get circuit_path, params: { qubit_count: 1 }, as: :json
 
     amplitudes = JSON.parse(@response.body)
 
@@ -16,7 +16,7 @@ class CircuitsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'ゲートなし 2 qubit の回路を計算' do
-    get circuit_path, params: { qubitCount: 2 }, as: :json
+    get circuit_path, params: { qubit_count: 2 }, as: :json
 
     amplitudes = JSON.parse(@response.body)
 
@@ -32,7 +32,7 @@ class CircuitsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'ゲートなし 3 qubit の回路を計算' do
-    get circuit_path, params: { qubitCount: 3 }, as: :json
+    get circuit_path, params: { qubit_count: 3 }, as: :json
 
     amplitudes = JSON.parse(@response.body)
 
@@ -55,15 +55,15 @@ class CircuitsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 0, amplitudes[7]['imag']
   end
 
-  # test 'H ゲート 1 つの回路を計算' do
-  #   get circuit_path, params: { circuit: { steps: ['H'] }, qubitCount: 1 }, as: :json
+  test 'H ゲート 1 つの回路を計算' do
+    get circuit_path, params: { circuit_json: '{ "cols": [["H"]] }', qubit_count: 1 }, as: :json
 
-  #   amplitudes = JSON.parse(@response.body)
+    amplitudes = JSON.parse(@response.body)
 
-  #   assert_equal 2, amplitudes.length
-  #   assert_equal 1 / Math.sqrt(2), amplitudes[0]['real']
-  #   assert_equal 0, amplitudes[0]['imag']
-  #   assert_equal 1 / Math.sqrt(2), amplitudes[1]['real']
-  #   assert_equal 0, amplitudes[1]['imag']
-  # end
+    assert_equal 2, amplitudes.length
+    assert_equal 1 / Math.sqrt(2), amplitudes[0]['real']
+    assert_equal 0, amplitudes[0]['imag']
+    assert_equal 1 / Math.sqrt(2), amplitudes[1]['real']
+    assert_equal 0, amplitudes[1]['imag']
+  end
 end

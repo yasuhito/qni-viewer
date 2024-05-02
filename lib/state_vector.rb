@@ -18,10 +18,25 @@ class StateVector
     @bits.chars.each do |each|
       raise "Invalid bit string: #{each}" unless each == '0'
 
-      @kets << Vector[1, 0]
+      @kets << Vector[Complex(1), Complex(0)]
     end
 
     # @kets のすべての要素についてテンソル積を計算し変数 matrix に入れる
     @matrix = @kets.inject(&:tensor_product)
+  end
+
+  # TODO: 移譲
+  def [](index)
+    @matrix[index]
+  end
+
+  # TODO: 移譲
+  def []=(index, complex)
+    @matrix[index] = complex
+  end
+
+  # TODO: 移譲
+  def size
+    @matrix.size
   end
 end
