@@ -66,4 +66,20 @@ class CircuitsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1 / Math.sqrt(2), amplitudes[1]['real']
     assert_equal 0, amplitudes[1]['imag']
   end
+
+  test 'H ゲート 2 つの回路を計算' do
+    get circuit_path, params: { circuit_json: '{ "cols": [["H", "H"]] }', qubit_count: 2 }, as: :json
+
+    amplitudes = JSON.parse(@response.body)
+
+    assert_equal 4, amplitudes.length
+    assert_in_delta 1 / Math.sqrt(4), amplitudes[0]['real']
+    assert_equal 0, amplitudes[0]['imag']
+    assert_in_delta 1 / Math.sqrt(4), amplitudes[1]['real']
+    assert_equal 0, amplitudes[1]['imag']
+    assert_in_delta 1 / Math.sqrt(4), amplitudes[2]['real']
+    assert_equal 0, amplitudes[2]['imag']
+    assert_in_delta 1 / Math.sqrt(4), amplitudes[3]['real']
+    assert_equal 0, amplitudes[3]['imag']
+  end
 end
