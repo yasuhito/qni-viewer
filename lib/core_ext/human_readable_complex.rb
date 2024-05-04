@@ -24,19 +24,33 @@ UNICODE_FRACTIONS = [
 # Complex クラスに #to_h を追加
 class Complex
   def to_h
-    abbreviate_float
+    abbreviate_float or to_s
   end
 
   private
 
   def abbreviate_float(epsilon = 0.0005)
-    fraction = match_unicode_fraction(epsilon)
-    fraction.fetch(:character)
+    fraction = match_unicode_fraction do |each|
+      (each.fetch(:value) - self).abs <= epsilon
+    end
+    return fraction.fetch(:character) if fraction
+
+    root_fraction = match_unicode_fraction do |each|
+      (Math.sqrt(each.fetch(:value)) - self).abs <= epsilon
+    end
+    return unless root_fraction
+
+    "√#{root_fraction.fetch(:character)}"
+
+    # const rootFraction = Format.matchUnicodeFraction(e => Math.abs(Math.sqrt(e.value) - value) <= epsilon)
+    # if (rootFraction !== undefined) {
+    #   return `\u221A${rootFraction.character}`
+    # }
   end
 
-  def match_unicode_fraction(epsilon)
+  def match_unicode_fraction(&block)
     UNICODE_FRACTIONS.each do |each|
-      return each if (self - each.fetch(:value)).abs <= epsilon
+      return each if block.yield(each)
     end
 
     nil
