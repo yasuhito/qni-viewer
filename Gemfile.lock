@@ -100,6 +100,8 @@ GEM
     debug (1.9.2)
       irb (~> 1.10)
       reline (>= 0.3.8)
+    dentaku (3.5.2)
+      concurrent-ruby
     drb (2.2.1)
     erubi (1.12.0)
     globalid (1.2.1)
@@ -277,6 +279,7 @@ DEPENDENCIES
   bootsnap
   capybara
   debug
+  dentaku
   importmap-rails
   jbuilder
   puma (>= 5.0)

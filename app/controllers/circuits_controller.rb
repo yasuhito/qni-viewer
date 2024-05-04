@@ -17,6 +17,8 @@ class CircuitsController < ApplicationController
     circuit_data['cols'].each do |each|
       each.each_with_index do |gate, bit|
         case gate
+        when 'I'
+          # nop
         when 'H'
           Rails.logger.debug { "#{gate} (qubit #{bit})" }
           @simulator.h bit
