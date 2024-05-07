@@ -27,6 +27,7 @@ module CoreExt::HumanReadableComplex
     if imag.abs <= 0.0005
       return abbreviate_float(real)
     end
+
     if real.abs <= 0.0005
       if (imag - 1).abs <= 0.0005
         return 'i'

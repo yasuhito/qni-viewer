@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-class ComplexToFractionTest < ActiveSupport::TestCase
+class ComplexToFractionTest < ActiveSupport::TestCase # rubocop:todo Style/Documentation
   test '1/2 → ½' do
     assert_equal '½', Complex(1.0 / 2).to_h
   end

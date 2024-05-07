@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-class ComplexToRootFractionTest < ActiveSupport::TestCase
+class ComplexToRootFractionTest < ActiveSupport::TestCase # rubocop:todo Style/Documentation
   test 'Complex(Math.sqrt(0.5)) → √½' do
     assert_equal '√½', Complex(Math.sqrt(1.0 / 2)).to_h
   end

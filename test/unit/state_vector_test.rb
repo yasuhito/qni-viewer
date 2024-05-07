@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-class StateVectorTest < ActiveSupport::TestCase
+class StateVectorTest < ActiveSupport::TestCase # rubocop:todo Style/Documentation
   test '|0> to Wolfram language' do
     state_vector = StateVector.new('0')
     assert_equal '{{1}, {0}}', state_vector.to_wolfram
