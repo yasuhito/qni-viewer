@@ -28,6 +28,6 @@ class CircuitsController < ApplicationController
       end
     end
 
-    CircuitJsonBroadcastJob.perform_now @circuit_json
+    CircuitJsonBroadcastJob.perform_now({ circuit_json: @circuit_json, state_vector: @simulator.state })
   end
 end

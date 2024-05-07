@@ -4,7 +4,8 @@
 class CircuitJsonBroadcastJob < ApplicationJob
   queue_as :default
 
-  def perform(circuit_json)
-    ActionCable.server.broadcast 'circuit_channel', { circuit_json: circuit_json }
+  def perform(data)
+    ActionCable.server.broadcast 'circuit_channel',
+                                 { circuit_json: data[:circuit_json], state_vector: data[:state_vector] }
   end
 end
