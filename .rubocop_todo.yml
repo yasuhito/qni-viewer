@@ -47,37 +47,6 @@ Style/Documentation:
     - 'config/application.rb'
     - 'lib/state_vector.rb'
 
-# Offense count: 24
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, always_true, never
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-    - 'config.ru'
-    - 'config/application.rb'
-    - 'config/boot.rb'
-    - 'config/environment.rb'
-    - 'config/environments/development.rb'
-    - 'config/environments/production.rb'
-    - 'config/environments/test.rb'
-    - 'config/importmap.rb'
-    - 'config/initializers/assets.rb'
-    - 'config/initializers/content_security_policy.rb'
-    - 'config/initializers/filter_parameter_logging.rb'
-    - 'config/initializers/inflections.rb'
-    - 'config/initializers/permissions_policy.rb'
-    - 'config/puma.rb'
-    - 'config/routes.rb'
-    - 'db/seeds.rb'
-    - 'lib/complex.rb'
-    - 'test/application_system_test_case.rb'
-    - 'test/channels/application_cable/connection_test.rb'
-    - 'test/channels/circuit_channel_test.rb'
-    - 'test/jobs/circuit_json_broadcast_job_test.rb'
-    - 'test/test_helper.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/GlobalStdStream:
