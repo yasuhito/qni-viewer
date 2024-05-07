@@ -3,10 +3,6 @@
 require 'test_helper'
 require_relative '../../lib/complex'
 
-def _(string)
-  Dentaku.evaluate string
-end
-
 class CircuitsControllerTest < ActionDispatch::IntegrationTest # rubocop:todo Style/Documentation
   test 'ゲートなし 1 qubit の回路を計算' do
     get circuit_path, params: { qubit_count: 1 }, as: :json
@@ -63,44 +59,39 @@ class CircuitsControllerTest < ActionDispatch::IntegrationTest # rubocop:todo St
   test 'H(0) 回路を計算' do
     get circuit_path, params: { circuit_json: '{ "cols": [["H"]] }', qubit_count: 1 }, as: :json
 
-    amplitudes = JSON.parse(@response.body)
+    amplitudes = JSON.parse(@response.body).map do |each|
+      Complex(each['real'], each['imag'])
+    end
 
     assert_equal 2, amplitudes.length
-    assert_in_delta _('1 / SQRT(2)'), amplitudes[0]['real']
-    assert_equal 0, amplitudes[0]['imag']
-    assert_in_delta _('1 / SQRT(2)'), amplitudes[1]['real']
-    assert_equal 0, amplitudes[1]['imag']
+    assert_equal '√½', amplitudes[0].to_h
   end
 
   test 'H(1) 回路を計算' do
     get circuit_path, params: { circuit_json: '{ "cols": [["I", "H"]] }', qubit_count: 2 }, as: :json
 
-    amplitudes = JSON.parse(@response.body)
+    amplitudes = JSON.parse(@response.body).map do |each|
+      Complex(each['real'], each['imag'])
+    end
 
     assert_equal 4, amplitudes.length
-    assert_in_delta _('1 / SQRT(2)'), amplitudes[0]['real']
-    assert_equal 0, amplitudes[0]['imag']
-    assert_equal 0, amplitudes[1]['real']
-    assert_equal 0, amplitudes[1]['imag']
-    assert_in_delta _('1 / SQRT(2)'), amplitudes[2]['real']
-    assert_equal 0, amplitudes[2]['imag']
-    assert_equal 0, amplitudes[3]['real']
-    assert_equal 0, amplitudes[3]['imag']
+    assert_equal '√½', amplitudes[0].to_h
+    assert_equal '0', amplitudes[1].to_h
+    assert_equal '√½', amplitudes[2].to_h
+    assert_equal '0', amplitudes[3].to_h
   end
 
   test 'H(1, 2) 回路を計算' do
     get circuit_path, params: { circuit_json: '{ "cols": [["H", "H"]] }', qubit_count: 2 }, as: :json
 
-    amplitudes = JSON.parse(@response.body)
+    amplitudes = JSON.parse(@response.body).map do |each|
+      Complex(each['real'], each['imag'])
+    end
 
     assert_equal 4, amplitudes.length
-    assert_in_delta _('1 / SQRT(4)'), amplitudes[0]['real']
-    assert_equal 0, amplitudes[0]['imag']
-    assert_in_delta _('1 / SQRT(4)'), amplitudes[1]['real']
-    assert_equal 0, amplitudes[1]['imag']
-    assert_in_delta _('1 / SQRT(4)'), amplitudes[2]['real']
-    assert_equal 0, amplitudes[2]['imag']
-    assert_in_delta _('1 / SQRT(4)'), amplitudes[3]['real']
-    assert_equal 0, amplitudes[3]['imag']
+    assert_equal '½', amplitudes[0].to_h
+    assert_equal '½', amplitudes[1].to_h
+    assert_equal '½', amplitudes[2].to_h
+    assert_equal '½', amplitudes[3].to_h
   end
 end
