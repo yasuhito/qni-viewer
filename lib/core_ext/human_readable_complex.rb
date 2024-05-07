@@ -24,28 +24,48 @@ UNICODE_FRACTIONS = [
 # Complex クラスに #to_h を追加
 class Complex
   def to_h
-    abbreviate_float or to_s
+    if imag.abs <= 0.0005
+      return abbreviate_float(real)
+    end
+    if real.abs <= 0.0005
+      if (imag - 1).abs <= 0.0005
+        return 'i'
+      end
+      if (imag + 1).abs <= 0.0005
+        return '-i'
+      end
+
+      return "#{abbreviate_float(imag)}i"
+    end
+
+    to_h_both_values(epsilon)
   end
 
   private
 
-  def abbreviate_float(epsilon = 0.0005)
+  def abbreviate_float(number, epsilon = 0.0005)
+    return '0' if number.abs < epsilon
+    return "-#{abbreviate_float(-number, epsilon)}" if number < 0
+
     fraction = match_unicode_fraction do |each|
-      (each.fetch(:value) - self).abs <= epsilon
+      (each.fetch(:value) - number).abs <= epsilon
     end
     return fraction.fetch(:character) if fraction
 
     root_fraction = match_unicode_fraction do |each|
-      (Math.sqrt(each.fetch(:value)) - self).abs <= epsilon
+      (Math.sqrt(each.fetch(:value)) - number).abs <= epsilon
     end
-    return unless root_fraction
+    return "√#{root_fraction.fetch(:character)}" if root_fraction
 
-    "√#{root_fraction.fetch(:character)}"
+    number.to_s
+  end
 
-    # const rootFraction = Format.matchUnicodeFraction(e => Math.abs(Math.sqrt(e.value) - value) <= epsilon)
-    # if (rootFraction !== undefined) {
-    #   return `\u221A${rootFraction.character}`
-    # }
+  def to_h_both_values(epsilon)
+    separator = imag >= 0 ? '+' : '-'
+    imag_factor = (imag.abs - 1).abs <= epsilon ? '' : abbreviate_float(imag.abs)
+    prefix = real < 0 ? '' : '+'
+
+    "#{prefix + abbreviate_float(real) + separator + imag_factor}i"
   end
 
   def match_unicode_fraction(&block)
