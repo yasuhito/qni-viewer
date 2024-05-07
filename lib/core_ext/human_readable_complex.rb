@@ -22,7 +22,7 @@ UNICODE_FRACTIONS = [
 ].freeze
 
 # Complex クラスに #to_h を追加
-class Complex
+module CoreExt::HumanReadableComplex
   def to_h
     if imag.abs <= 0.0005
       return abbreviate_float(real)
@@ -75,33 +75,4 @@ class Complex
 
     nil
   end
-
-  # /**
-  #  * Returns a string representation of a float, taking advantage of unicode
-  #  * fractions and square roots.
-  #  *
-  #  * @param value  The value to represent as a string.
-  #  * @param epsilon  The maximum error introduced by using an expression.
-  #  * @param digits  digits The number of digits to use if no expression matches.
-  #  */
-  # private abbreviateFloat(value: number, epsilon = 0, digits: number | undefined = undefined): string {
-  #   if (Math.abs(value) < epsilon) return '0'
-  #   if (value < 0) return `-${this.abbreviateFloat(-value, epsilon, digits)}`
-
-  #   const fraction = Format.matchUnicodeFraction(e => Math.abs(e.value - value) <= epsilon)
-  #   if (fraction !== undefined) {
-  #     return fraction.character
-  #   }
-
-  #   const rootFraction = Format.matchUnicodeFraction(e => Math.abs(Math.sqrt(e.value) - value) <= epsilon)
-  #   if (rootFraction !== undefined) {
-  #     return `\u221A${rootFraction.character}`
-  #   }
-
-  #   if (value % 1 !== 0 && digits !== undefined) {
-  #     return value.toFixed(digits)
-  #   }
-
-  #   return value.toString()
-  # }
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'core_ext/complex'
+require_relative '../../lib/complex'
 
 def _(string)
   Dentaku.evaluate string
