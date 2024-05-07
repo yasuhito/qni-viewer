@@ -24,17 +24,11 @@ UNICODE_FRACTIONS = [
 # Complex クラスに #to_h を追加
 module CoreExt::HumanReadableComplex
   def to_h
-    if imag.abs <= 0.0005
-      return abbreviate_float(real)
-    end
+    return abbreviate_float(real) if imag.abs <= 0.0005
 
     if real.abs <= 0.0005
-      if (imag - 1).abs <= 0.0005
-        return 'i'
-      end
-      if (imag + 1).abs <= 0.0005
-        return '-i'
-      end
+      return 'i' if (imag - 1).abs <= 0.0005
+      return '-i' if (imag + 1).abs <= 0.0005
 
       return "#{abbreviate_float(imag)}i"
     end

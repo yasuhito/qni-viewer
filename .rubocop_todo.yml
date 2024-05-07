@@ -53,12 +53,6 @@ Style/GlobalStdStream:
   Exclude:
     - 'config/environments/production.rb'
 
-# Offense count: 3
-# This cop supports safe autocorrection (--autocorrect).
-Style/IfUnlessModifier:
-  Exclude:
-    - 'lib/core_ext/human_readable_complex.rb'
-
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyle, AllowedMethods, AllowedPatterns.
@@ -67,56 +61,9 @@ Style/NumericPredicate:
   Exclude:
     - 'lib/core_ext/human_readable_complex.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: PreferredDelimiters.
-Style/PercentLiteralDelimiters:
-  Exclude:
-    - 'config/application.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantConstantBase:
-  Exclude:
-    - 'config/environments/production.rb'
-
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: SafeForConstants.
 Style/RedundantFetchBlock:
   Exclude:
     - 'config/puma.rb'
-
-# Offense count: 78
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, ConsistentQuotesInMultiline.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiterals:
-  Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-    - 'config.ru'
-    - 'config/application.rb'
-    - 'config/boot.rb'
-    - 'config/environment.rb'
-    - 'config/environments/development.rb'
-    - 'config/environments/production.rb'
-    - 'config/environments/test.rb'
-    - 'config/importmap.rb'
-    - 'config/initializers/assets.rb'
-    - 'config/puma.rb'
-    - 'config/routes.rb'
-    - 'lib/complex.rb'
-    - 'test/application_system_test_case.rb'
-    - 'test/channels/application_cable/connection_test.rb'
-    - 'test/channels/circuit_channel_test.rb'
-    - 'test/jobs/circuit_json_broadcast_job_test.rb'
-    - 'test/test_helper.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: .
-# SupportedStyles: percent, brackets
-Style/SymbolArray:
-  EnforcedStyle: percent
-  MinSize: 10
