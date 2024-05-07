@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>QniViewer</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <link href="https://unpkg.com/@qni/elements/dist/qni.css" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@qni/elements/dist/index.js"></script>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
