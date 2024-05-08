@@ -6,7 +6,7 @@ require 'simulator'
 class CircuitsController < ApplicationController
   def show
     @circuit_json = params['circuit_json']
-    @simulator = Simulator.new('0' * params['qubit_count'].to_i)
+    @simulator = Simulator.new(params['qubit_count'] ? '0' * params['qubit_count'].to_i : '0')
 
     return unless @circuit_json
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require_relative '../../lib/vector'
 
 class StateVectorTest < ActiveSupport::TestCase
   test '|0> to Wolfram language' do
@@ -61,5 +62,53 @@ class StateVectorTest < ActiveSupport::TestCase
   test '|0(-i)> to Wolfram language' do
     state_vector = StateVector.new('0(-i)')
     assert_equal '{{√½}, {-√½i}, {0}, {0}}', state_vector.to_wolfram
+  end
+
+  test '|> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: ''" do
+      StateVector.new('')
+    end
+  end
+
+  test '|(0> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: '(0'" do
+      StateVector.new('(0')
+    end
+  end
+
+  test '|(1> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: '(1'" do
+      StateVector.new('(1')
+    end
+  end
+
+  test '|(+> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: '(+'" do
+      StateVector.new('(+')
+    end
+  end
+
+  test '|(i> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: '(i'" do
+      StateVector.new('(i')
+    end
+  end
+
+  test '|((> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: '(('" do
+      StateVector.new('((')
+    end
+  end
+
+  test '|()> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: '()'" do
+      StateVector.new('()')
+    end
+  end
+
+  test '|(--> should raise an error' do
+    assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: '(--'" do
+      StateVector.new('(--')
+    end
   end
 end

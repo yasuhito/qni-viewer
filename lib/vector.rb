@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'core_ext/vector_tensor_product'
+require 'core_ext/vector_math_utils'
 
 class Vector
-  include CoreExt::VectorTensorProduct
+  include CoreExt::VectorMathUtils
 end
