@@ -41,14 +41,6 @@ Style/Documentation:
 
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle, AllowedMethods, AllowedPatterns.
-# SupportedStyles: predicate, comparison
-Style/NumericPredicate:
-  Exclude:
-    - 'lib/core_ext/human_readable_complex.rb'
-
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: SafeForConstants.
 Style/RedundantFetchBlock:
   Exclude:

@@ -24,12 +24,12 @@ UNICODE_FRACTIONS = [
 module CoreExt
   # Complex クラスに #to_h を追加
   module HumanReadableComplex
-    def to_h
-      return abbreviate_float(real) if imag.abs <= 0.0005
+    def to_h(epsilon = 0.0005)
+      return abbreviate_float(real) if imag.abs <= epsilon
 
       if real.abs <= 0.0005
-        return 'i' if (imag - 1).abs <= 0.0005
-        return '-i' if (imag + 1).abs <= 0.0005
+        return 'i' if (imag - 1).abs <= epsilon
+        return '-i' if (imag + 1).abs <= epsilon
 
         return "#{abbreviate_float(imag)}i"
       end
@@ -41,7 +41,7 @@ module CoreExt
 
     def abbreviate_float(number, epsilon = 0.0005)
       return '0' if number.abs < epsilon
-      return "-#{abbreviate_float(-number, epsilon)}" if number < 0
+      return "-#{abbreviate_float(-number, epsilon)}" if number.negative?
 
       fraction = match_unicode_fraction do |each|
         (each.fetch(:value) - number).abs <= epsilon
@@ -59,7 +59,7 @@ module CoreExt
     def to_h_both_values(epsilon)
       separator = imag >= 0 ? '+' : '-'
       imag_factor = (imag.abs - 1).abs <= epsilon ? '' : abbreviate_float(imag.abs)
-      prefix = real < 0 ? '' : '+'
+      prefix = real.negative? ? '' : '+'
 
       "#{prefix + abbreviate_float(real) + separator + imag_factor}i"
     end
