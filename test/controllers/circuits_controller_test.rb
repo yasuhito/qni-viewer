@@ -3,7 +3,7 @@
 require 'test_helper'
 require_relative '../../lib/complex'
 
-class CircuitsControllerTest < ActionDispatch::IntegrationTest # rubocop:todo Style/Documentation
+class CircuitsControllerTest < ActionDispatch::IntegrationTest
   test 'ゲートなし 1 qubit の回路を計算' do
     get circuit_path, params: { qubit_count: 1 }, as: :json
 

@@ -2,12 +2,15 @@
 
 require 'matrix'
 
+# Vector クラスに #tensor_product メソッドを追加
+# TODO: core_ext に移動
 class Vector
   def tensor_product(other)
     Vector.elements(to_a.product(other.to_a).map { |a, b| a * b })
   end
 end
 
+# 状態ベクトルのあれこれ
 class StateVector
   attr_reader :matrix
 

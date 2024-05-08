@@ -9,6 +9,7 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 module QniViewer
+  # 量子回路 JSON を入力すると回路図を表示して状態ベクトルを計算してくれるアプリ
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1

@@ -32,9 +32,3 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 10
 
-# Offense count: 3
-# Configuration parameters: AllowedConstants.
-Style/Documentation:
-  Exclude:
-    - 'config/application.rb'
-    - 'lib/state_vector.rb'
