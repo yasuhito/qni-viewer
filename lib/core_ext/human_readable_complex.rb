@@ -21,53 +21,55 @@ UNICODE_FRACTIONS = [
   { character: '⅒', value: 1.0 / 10 }
 ].freeze
 
-# Complex クラスに #to_h を追加
-module CoreExt::HumanReadableComplex
-  def to_h
-    return abbreviate_float(real) if imag.abs <= 0.0005
+module CoreExt
+  # Complex クラスに #to_h を追加
+  module HumanReadableComplex
+    def to_h
+      return abbreviate_float(real) if imag.abs <= 0.0005
 
-    if real.abs <= 0.0005
-      return 'i' if (imag - 1).abs <= 0.0005
-      return '-i' if (imag + 1).abs <= 0.0005
+      if real.abs <= 0.0005
+        return 'i' if (imag - 1).abs <= 0.0005
+        return '-i' if (imag + 1).abs <= 0.0005
 
-      return "#{abbreviate_float(imag)}i"
+        return "#{abbreviate_float(imag)}i"
+      end
+
+      to_h_both_values(epsilon)
     end
 
-    to_h_both_values(epsilon)
-  end
+    private
 
-  private
+    def abbreviate_float(number, epsilon = 0.0005)
+      return '0' if number.abs < epsilon
+      return "-#{abbreviate_float(-number, epsilon)}" if number < 0
 
-  def abbreviate_float(number, epsilon = 0.0005)
-    return '0' if number.abs < epsilon
-    return "-#{abbreviate_float(-number, epsilon)}" if number < 0
+      fraction = match_unicode_fraction do |each|
+        (each.fetch(:value) - number).abs <= epsilon
+      end
+      return fraction.fetch(:character) if fraction
 
-    fraction = match_unicode_fraction do |each|
-      (each.fetch(:value) - number).abs <= epsilon
-    end
-    return fraction.fetch(:character) if fraction
+      root_fraction = match_unicode_fraction do |each|
+        (Math.sqrt(each.fetch(:value)) - number).abs <= epsilon
+      end
+      return "√#{root_fraction.fetch(:character)}" if root_fraction
 
-    root_fraction = match_unicode_fraction do |each|
-      (Math.sqrt(each.fetch(:value)) - number).abs <= epsilon
-    end
-    return "√#{root_fraction.fetch(:character)}" if root_fraction
-
-    number.to_s
-  end
-
-  def to_h_both_values(epsilon)
-    separator = imag >= 0 ? '+' : '-'
-    imag_factor = (imag.abs - 1).abs <= epsilon ? '' : abbreviate_float(imag.abs)
-    prefix = real < 0 ? '' : '+'
-
-    "#{prefix + abbreviate_float(real) + separator + imag_factor}i"
-  end
-
-  def match_unicode_fraction(&block)
-    UNICODE_FRACTIONS.each do |each|
-      return each if block.yield(each)
+      number.to_s
     end
 
-    nil
+    def to_h_both_values(epsilon)
+      separator = imag >= 0 ? '+' : '-'
+      imag_factor = (imag.abs - 1).abs <= epsilon ? '' : abbreviate_float(imag.abs)
+      prefix = real < 0 ? '' : '+'
+
+      "#{prefix + abbreviate_float(real) + separator + imag_factor}i"
+    end
+
+    def match_unicode_fraction(&block)
+      UNICODE_FRACTIONS.each do |each|
+        return each if block.yield(each)
+      end
+
+      nil
+    end
   end
 end

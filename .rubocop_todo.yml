@@ -32,14 +32,6 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 10
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: nested, compact
-Style/ClassAndModuleChildren:
-  Exclude:
-    - 'lib/core_ext/human_readable_complex.rb'
-
 # Offense count: 3
 # Configuration parameters: AllowedConstants.
 Style/Documentation:
