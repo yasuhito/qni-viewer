@@ -38,10 +38,3 @@ Style/Documentation:
   Exclude:
     - 'config/application.rb'
     - 'lib/state_vector.rb'
-
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: SafeForConstants.
-Style/RedundantFetchBlock:
-  Exclude:
-    - 'config/puma.rb'
