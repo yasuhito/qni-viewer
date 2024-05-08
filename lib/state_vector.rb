@@ -1,80 +1,79 @@
 # frozen_string_literal: true
 
 require 'matrix'
+require 'vector'
 
-# Vector クラスに #tensor_product メソッドを追加
-# TODO: core_ext に移動
-class Vector
-  def tensor_product(other)
-    Vector.elements(to_a.product(other.to_a).map { |a, b| a * b })
-  end
-end
-
-# 状態ベクトルのあれこれ
+# 状態ベクトルとその各種操作
 class StateVector
-  attr_reader :matrix
+  extend Forwardable
+
+  def_delegator :@vector, :size
+  def_delegator :@vector, :[]
+  def_delegator :@vector, :[]=
+  def_delegator :@vector, :map
 
   def initialize(bits)
-    @bits = bits
-    @kets = []
-    paren = false
-    paren_token = ''
+    @vector = parse_bits_string(bits)
+  end
 
-    @bits.chars.each do |each|
+  def to_wolfram
+    items = @vector.flat_map { |each| "{#{Complex(each).to_h}}" }
+    "{#{items.join(', ')}}"
+  end
+
+  private
+
+  # rubocop:disable Metrics/PerceivedComplexity
+  def parse_bits_string(bits)
+    kets = []
+    in_paren = false
+    in_paren_token = ''
+
+    bits.chars.each do |each|
       case each
-      when '0'
-        @kets << Vector[Complex(1), Complex(0)]
-      when '1'
-        @kets << Vector[Complex(0), Complex(1)]
-      when '+'
-        # TODO: Math.sqrt(Vector[0.5, 0.5]) みたいに書けないか調べる
-        @kets << Vector[Complex(Math.sqrt(0.5)), Complex(Math.sqrt(0.5))]
+      when '0' # |0>
+        kets << Vector[1, 0]
+      when '1' # |1>
+        kets << Vector[0, 1]
+      when '+' # |+>
+        kets << sqrt(Vector[0.5, 0.5])
       when '-'
-        if paren
-          paren_token += '-'
-        else
-          @kets << Vector[Complex(Math.sqrt(0.5)), -Complex(Math.sqrt(0.5))]
+        if in_paren
+          in_paren_token += '-'
+        else # |->
+          kets << Vector[sqrt(0.5), -sqrt(0.5)]
         end
       when 'i'
-        if paren
-          paren_token += 'i'
-        else
-          @kets << Vector[Complex(Math.sqrt(0.5)), Complex(0, Math.sqrt(0.5))]
+        if in_paren
+          in_paren_token += 'i'
+        else # |i>
+          kets << Vector[sqrt(0.5), Complex(0, sqrt(0.5))]
         end
       when '('
-        paren = true
-        paren_token = ''
+        in_paren = true
+        in_paren_token = ''
       when ')'
-        raise unless paren_token == '-i'
+        raise unless in_paren_token == '-i'
 
-        @kets << Vector[Complex(Math.sqrt(0.5)), Complex(0, -Math.sqrt(0.5))]
-        paren = false
+        # |-i>
+        kets << Vector[sqrt(0.5), Complex(0, -sqrt(0.5))]
+        in_paren = false
       else
         raise "Invalid bit string: #{each}"
       end
     end
 
-    # @kets のすべての要素についてテンソル積を計算し変数 matrix に入れる
-    @matrix = @kets.inject(&:tensor_product)
+    kets.inject(&:tensor_product)
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
-  def to_wolfram
-    items = @matrix.flat_map { |each| "{#{each.to_h}}" }
-    "{#{items.join(', ')}}"
-  end
-
-  # TODO: 移譲
-  def [](index)
-    @matrix[index]
-  end
-
-  # TODO: 移譲
-  def []=(index, complex)
-    @matrix[index] = complex
-  end
-
-  # TODO: 移譲
-  def size
-    @matrix.size
+  def sqrt(value)
+    if value.is_a?(Numeric)
+      Math.sqrt(value)
+    else
+      value.map do |each|
+        Math.sqrt(each)
+      end
+    end
   end
 end

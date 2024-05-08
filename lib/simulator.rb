@@ -22,8 +22,8 @@ class Simulator
   end
 
   def state
-    # @state_vector.matrix の各要素を複素数に変換した配列を返す
-    @state_vector.matrix.to_a.map do |each|
+    # @state_vector の各要素を複素数に変換した配列を返す
+    @state_vector.map do |each|
       c = Complex(each)
       { real: c.real, imag: c.imag }
     end
@@ -42,13 +42,6 @@ class Simulator
     ci = gate[1, 0].imag
     dr = gate[1, 1].real
     di = gate[1, 1].imag
-
-    Rails.logger.debug { "ar = #{ar}, ai = #{ai}" }
-    Rails.logger.debug { "br = #{br}, bi = #{bi}" }
-    Rails.logger.debug { "cr = #{cr}, ci = #{ci}" }
-    Rails.logger.debug { "dr = #{dr}, di = #{di}" }
-
-    Rails.logger.debug { "statevector size = #{@state_vector.size}" }
 
     i = 0
     (0...@state_vector.size).each do |row|
