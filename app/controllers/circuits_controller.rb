@@ -27,14 +27,16 @@ class CircuitsController < ApplicationController
         when 1
           # nop
         when 'H'
-          Rails.logger.debug { "#{gate} (qubit #{bit})" }
           @simulator.h bit
         when 'X'
-          Rails.logger.debug { "#{gate} (qubit #{bit})" }
           @simulator.x bit
+        when 'Y'
+          @simulator.y bit
         else
           raise "Unknown gate: #{gate}"
         end
+
+        Rails.logger.debug { "#{gate} (qubit #{bit})" }
       end
     end
 

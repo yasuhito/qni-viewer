@@ -6,10 +6,12 @@ require 'matrix'
 # 量子回路シミュレータ
 class Simulator
   # TODO: 適切なクラスに移動
-  H = Matrix[[1 / Math.sqrt(2), 1 / Math.sqrt(2)],
-             [1 / Math.sqrt(2), -1 / Math.sqrt(2)]]
+  H = Matrix[[1, 1],
+             [1, -1]] * Math.sqrt(0.5)
   X = Matrix[[0, 1],
              [1, 0]]
+  Y = Matrix[[0, -Complex::I],
+             [Complex::I, 0]]
 
   def initialize(bits)
     @bits = bits
@@ -23,6 +25,11 @@ class Simulator
 
   def x(target_bit)
     @state_vector = times_qubit_operation(X, target_bit)
+    self
+  end
+
+  def y(target_bit)
+    @state_vector = times_qubit_operation(Y, target_bit)
     self
   end
 
