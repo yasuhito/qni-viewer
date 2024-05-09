@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'cgi'
+
+json = CGI.unescape(ARGV[0]).gsub('"') { '\"' }
+
+system <<~COMMAND
+  curl -H "accept: application/json" \
+       -H "Content-Type: application/json" \
+       -d '{"circuit_json": "#{json}"}' \
+       -w'\\n' \
+       -XGET http://localhost:3000/
+COMMAND

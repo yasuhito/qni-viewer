@@ -6,18 +6,25 @@ require 'simulator'
 class CircuitsController < ApplicationController
   def show
     @circuit_json = params['circuit_json']
-    @simulator = Simulator.new(params['qubit_count'] ? '0' * params['qubit_count'].to_i : '0')
+    Rails.logger.debug { "circuit_json = #{@circuit_json.inspect}" }
 
     return unless @circuit_json
 
-    Rails.logger.debug(@circuit_json.inspect)
     circuit_data = JSON.parse(@circuit_json)
+    Rails.logger.debug(circuit_data.inspect)
+    Rails.logger.debug(circuit_data['cols'][0].inspect)
+
+    qubit_count = circuit_data['cols'].map(&:length).max
+
+    Rails.logger.debug { "qubit_count = #{qubit_count}" }
+
+    @simulator = Simulator.new('0' * qubit_count)
 
     # 回路のそれぞれのステップを実行
     circuit_data['cols'].each do |each|
       each.each_with_index do |gate, bit|
         case gate
-        when 'I'
+        when 1
           # nop
         when 'H'
           Rails.logger.debug { "#{gate} (qubit #{bit})" }
