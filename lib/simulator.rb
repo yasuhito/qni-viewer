@@ -6,8 +6,10 @@ require 'matrix'
 # 量子回路シミュレータ
 class Simulator
   # TODO: 適切なクラスに移動
-  H = Matrix[[Complex(1 / Math.sqrt(2)), Complex(1 / Math.sqrt(2))],
-             [Complex(1 / Math.sqrt(2)), Complex(-1 / Math.sqrt(2))]]
+  H = Matrix[[1 / Math.sqrt(2), 1 / Math.sqrt(2)],
+             [1 / Math.sqrt(2), -1 / Math.sqrt(2)]]
+  X = Matrix[[0, 1],
+             [1, 0]]
 
   def initialize(bits)
     @bits = bits
@@ -16,8 +18,11 @@ class Simulator
 
   def h(target_bit)
     @state_vector = times_qubit_operation(H, target_bit)
-    # @state_vector.timesQubitOperation(H, target_bit, 0)
-    # this.state.timesQubitOperation(H, target_bit, 0)
+    self
+  end
+
+  def x(target_bit)
+    @state_vector = times_qubit_operation(X, target_bit)
     self
   end
 
