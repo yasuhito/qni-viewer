@@ -26,16 +26,20 @@ class CircuitsController < ApplicationController
           @simulator.h bit
         when 'X'
           controls = each.map.with_index { |each, index| index if each == '•' }.compact
-          if controls.empty?
-            @simulator.x bit
+          anti_controls = each.map.with_index { |each, index| index if each == '◦' }.compact
+
+          if (controls.length > 0) || (anti_controls.length > 0)
+            @simulator.cnot bit, controls, anti_controls
           else
-            @simulator.cnot bit, controls
+            @simulator.x bit
           end
         when 'Y'
           @simulator.y bit
         when 'Z'
           @simulator.z bit
         when '•'
+          # nop
+        when '◦'
           # nop
         when '|0>'
           @simulator.write 0, bit
