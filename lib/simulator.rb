@@ -15,9 +15,12 @@ class Simulator
   Z = Matrix[[1, 0],
              [0, -1]]
 
+  attr_reader :measured_bits
+
   def initialize(bits)
     @bits = bits
     @state_vector = StateVector.new(@bits)
+    @measured_bits = []
   end
 
   def h(target_bit)
@@ -54,11 +57,13 @@ class Simulator
         @state_vector[each] = Complex(0, 0) if (each & (1 << target_bit)) != 0
         @state_vector[each] = @state_vector[each] / Math.sqrt(p_zero)
       end
+      @measured_bits[target_bit] = 0
     else
       (0...(1 << @state_vector.qubit_count)).each do |each|
         @state_vector[each] = Complex(0, 0) if (each & (1 << target_bit)).zero?
         @state_vector[each] = @state_vector[each] / Math.sqrt(1 - p_zero)
       end
+      @measured_bits[target_bit] = 1
     end
 
     self
