@@ -25,22 +25,22 @@ class Simulator
   end
 
   def h(target_bit)
-    @state_vector = times_qubit_operation(H, target_bit, 0)
+    @state_vector = times_qubit_operation(H, target_bit)
     self
   end
 
   def x(target_bit)
-    @state_vector = times_qubit_operation(X, target_bit, 0)
+    @state_vector = times_qubit_operation(X, target_bit)
     self
   end
 
   def y(target_bit)
-    @state_vector = times_qubit_operation(Y, target_bit, 0)
+    @state_vector = times_qubit_operation(Y, target_bit)
     self
   end
 
   def z(target_bit)
-    @state_vector = times_qubit_operation(Z, target_bit, 0)
+    @state_vector = times_qubit_operation(Z, target_bit)
     self
   end
 
