@@ -36,6 +36,8 @@ class CircuitsController < ApplicationController
           @simulator.z bit
         when '|0>'
           @simulator.write 0, bit
+        when '|1>'
+          @simulator.write 1, bit
         else
           raise "Unknown gate: #{gate}"
         end

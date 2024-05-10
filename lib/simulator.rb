@@ -42,9 +42,7 @@ class Simulator
 
   def write(value, target_bit)
     p_zero = probability_zero(target_bit).round(5)
-
     x(target_bit) if (value.zero? && p_zero.zero?) || (value == 1 && p_zero == 1)
-
     self
   end
 
