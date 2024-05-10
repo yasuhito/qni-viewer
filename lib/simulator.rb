@@ -46,6 +46,24 @@ class Simulator
     self
   end
 
+  def measure(target_bit)
+    p_zero = probability_zero(target_bit)
+
+    if rand <= p_zero
+      (0...(1 << @state_vector.qubit_count)).each do |each|
+        @state_vector[each] = Complex(0, 0) if (each & (1 << target_bit)) != 0
+        @state_vector[each] = @state_vector[each] / Math.sqrt(p_zero)
+      end
+    else
+      (0...(1 << @state_vector.qubit_count)).each do |each|
+        @state_vector[each] = Complex(0, 0) if (each & (1 << target_bit)).zero?
+        @state_vector[each] = @state_vector[each] / Math.sqrt(1 - p_zero)
+      end
+    end
+
+    self
+  end
+
   def state
     # @state_vector の各要素を複素数に変換した配列を返す
     @state_vector.map do |each|

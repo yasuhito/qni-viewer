@@ -38,6 +38,8 @@ class CircuitsController < ApplicationController
           @simulator.write 0, bit
         when '|1>'
           @simulator.write 1, bit
+        when 'Measurement'
+          @simulator.measure bit
         else
           raise "Unknown gate: #{gate}"
         end
