@@ -2,6 +2,7 @@
 
 require 'test_helper'
 require_relative '../../lib/complex'
+require_relative '../../lib/vector'
 
 class CircuitsControllerTest
   class HGateTest < ActionDispatch::IntegrationTest
@@ -169,6 +170,90 @@ class CircuitsControllerTest
       assert_equal '0', amplitudes[1].to_h
       assert_equal '0', amplitudes[2].to_h
       assert_equal '0', amplitudes[3].to_h
+    end
+  end
+
+  class Write0GateTest < ActionDispatch::IntegrationTest
+    test '|0>(0) 回路を計算' do
+      get circuit_path, params: { circuit_json: '{ "cols": [["|0>"]] }' }, as: :json
+
+      amplitudes = JSON.parse(@response.body).map do |each|
+        Complex(each['real'], each['imag'])
+      end
+
+      assert_equal 2, amplitudes.length
+      assert_equal '1', amplitudes[0].to_h
+      assert_equal '0', amplitudes[1].to_h
+    end
+
+    test '|0>(1) 回路を計算' do
+      get circuit_path, params: { circuit_json: '{ "cols": [[1, "|0>"]] }' }, as: :json
+
+      amplitudes = JSON.parse(@response.body).map do |each|
+        Complex(each['real'], each['imag'])
+      end
+
+      assert_equal 4, amplitudes.length
+      assert_equal '1', amplitudes[0].to_h
+      assert_equal '0', amplitudes[1].to_h
+      assert_equal '0', amplitudes[2].to_h
+      assert_equal '0', amplitudes[3].to_h
+    end
+
+    test '|0>(1, 2) 回路を計算' do
+      get circuit_path, params: { circuit_json: '{ "cols": [["|0>", "|0>"]] }' }, as: :json
+
+      amplitudes = JSON.parse(@response.body).map do |each|
+        Complex(each['real'], each['imag'])
+      end
+
+      assert_equal 4, amplitudes.length
+      assert_equal '1', amplitudes[0].to_h
+      assert_equal '0', amplitudes[1].to_h
+      assert_equal '0', amplitudes[2].to_h
+      assert_equal '0', amplitudes[3].to_h
+    end
+  end
+
+  class Write1GateTest < ActionDispatch::IntegrationTest
+    test '|1>(0) 回路を計算' do
+      get circuit_path, params: { circuit_json: '{ "cols": [["|1>"]] }' }, as: :json
+
+      amplitudes = JSON.parse(@response.body).map do |each|
+        Complex(each['real'], each['imag'])
+      end
+
+      assert_equal 2, amplitudes.length
+      assert_equal '0', amplitudes[0].to_h
+      assert_equal '1', amplitudes[1].to_h
+    end
+
+    test '|1>(1) 回路を計算' do
+      get circuit_path, params: { circuit_json: '{ "cols": [[1, "|1>"]] }' }, as: :json
+
+      amplitudes = JSON.parse(@response.body).map do |each|
+        Complex(each['real'], each['imag'])
+      end
+
+      assert_equal 4, amplitudes.length
+      assert_equal '0', amplitudes[0].to_h
+      assert_equal '0', amplitudes[1].to_h
+      assert_equal '1', amplitudes[2].to_h
+      assert_equal '0', amplitudes[3].to_h
+    end
+
+    test '|1>(1, 2) 回路を計算' do
+      get circuit_path, params: { circuit_json: '{ "cols": [["|1>", "|1>"]] }' }, as: :json
+
+      amplitudes = JSON.parse(@response.body).map do |each|
+        Complex(each['real'], each['imag'])
+      end
+
+      assert_equal 4, amplitudes.length
+      assert_equal '0', amplitudes[0].to_h
+      assert_equal '0', amplitudes[1].to_h
+      assert_equal '0', amplitudes[2].to_h
+      assert_equal '1', amplitudes[3].to_h
     end
   end
 end
