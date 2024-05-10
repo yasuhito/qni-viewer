@@ -23,6 +23,10 @@ class StateVector
     @vector = parse_bit_string(bits)
   end
 
+  def qubit_count
+    Math.log2(size).to_i
+  end
+
   def to_wolfram
     items = @vector.flat_map { |each| "{#{Complex(each).to_h}}" }
     "{#{items.join(', ')}}"
