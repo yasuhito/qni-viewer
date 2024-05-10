@@ -32,6 +32,8 @@ class CircuitsController < ApplicationController
           @simulator.x bit
         when 'Y'
           @simulator.y bit
+        when 'Z'
+          @simulator.z bit
         else
           raise "Unknown gate: #{gate}"
         end

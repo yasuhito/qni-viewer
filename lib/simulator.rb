@@ -12,6 +12,8 @@ class Simulator
              [1, 0]]
   Y = Matrix[[0, -Complex::I],
              [Complex::I, 0]]
+  Z = Matrix[[1, 0],
+             [0, -1]]
 
   def initialize(bits)
     @bits = bits
@@ -30,6 +32,11 @@ class Simulator
 
   def y(target_bit)
     @state_vector = times_qubit_operation(Y, target_bit)
+    self
+  end
+
+  def z(target_bit)
+    @state_vector = times_qubit_operation(Z, target_bit)
     self
   end
 
