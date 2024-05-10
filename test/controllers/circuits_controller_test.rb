@@ -137,6 +137,28 @@ class CircuitsControllerTest
     end
   end
 
+  class CnotGateTest < GateTest
+    test 'Cnot (X が発火しない)' do
+      get circuit_path, params: { circuit_json: '{ "cols": [["•", "X"]] }' }, as: :json
+
+      assert_equal 4, amplitudes.length
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+    end
+
+    test 'Cnot (X が発火)' do
+      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["•", "X"]] }' }, as: :json
+
+      assert_equal 4, amplitudes.length
+      assert_equal 0, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 1, amplitudes[3]
+    end
+  end
+
   class Write0GateTest < GateTest
     test '|0>(0) 回路を計算' do
       get circuit_path, params: { circuit_json: '{ "cols": [["|0>"]] }' }, as: :json

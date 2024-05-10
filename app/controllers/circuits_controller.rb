@@ -4,19 +4,15 @@ require 'simulator'
 
 # コマンドラインで受け取った回路の JSON を表示し、ブラウザへプッシュ
 class CircuitsController < ApplicationController
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def show
     @circuit_json = params['circuit_json']
-    Rails.logger.debug { "circuit_json = #{@circuit_json.inspect}" }
 
     return unless @circuit_json
 
     circuit_data = JSON.parse(@circuit_json)
-    Rails.logger.debug(circuit_data.inspect)
-    Rails.logger.debug(circuit_data['cols'][0].inspect)
-
     qubit_count = circuit_data['cols'].map(&:length).max
-
-    Rails.logger.debug { "qubit_count = #{qubit_count}" }
 
     @simulator = Simulator.new('0' * qubit_count)
 
@@ -29,11 +25,18 @@ class CircuitsController < ApplicationController
         when 'H'
           @simulator.h bit
         when 'X'
-          @simulator.x bit
+          controls = each.map.with_index { |each, index| index if each == '•' }.compact
+          if controls.empty?
+            @simulator.x bit
+          else
+            @simulator.cnot bit, controls
+          end
         when 'Y'
           @simulator.y bit
         when 'Z'
           @simulator.z bit
+        when '•'
+          # nop
         when '|0>'
           @simulator.write 0, bit
         when '|1>'
@@ -43,11 +46,11 @@ class CircuitsController < ApplicationController
         else
           raise "Unknown gate: #{gate}"
         end
-
-        Rails.logger.debug { "#{gate} (qubit #{bit})" }
       end
     end
 
     CircuitJsonBroadcastJob.perform_now({ circuit_json: @circuit_json, state_vector: @simulator.state })
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 end

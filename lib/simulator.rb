@@ -4,6 +4,7 @@ require 'state_vector'
 require 'matrix'
 
 # 量子回路シミュレータ
+# rubocop:disable Metrics/ClassLength
 class Simulator
   # TODO: 適切なクラスに移動
   H = Matrix[[1, 1],
@@ -24,22 +25,27 @@ class Simulator
   end
 
   def h(target_bit)
-    @state_vector = times_qubit_operation(H, target_bit)
+    @state_vector = times_qubit_operation(H, target_bit, 0)
     self
   end
 
   def x(target_bit)
-    @state_vector = times_qubit_operation(X, target_bit)
+    @state_vector = times_qubit_operation(X, target_bit, 0)
     self
   end
 
   def y(target_bit)
-    @state_vector = times_qubit_operation(Y, target_bit)
+    @state_vector = times_qubit_operation(Y, target_bit, 0)
     self
   end
 
   def z(target_bit)
-    @state_vector = times_qubit_operation(Z, target_bit)
+    @state_vector = times_qubit_operation(Z, target_bit, 0)
+    self
+  end
+
+  def cnot(target_bit, controls)
+    cu controls, X, target_bit
     self
   end
 
@@ -79,9 +85,7 @@ class Simulator
 
   private
 
-  def times_qubit_operation(gate, target_bit)
-    Rails.logger.debug { "target_bit = #{target_bit}" }
-
+  def times_qubit_operation(gate, target_bit, control_mask = 0, desigred_value_mask = 0)
     ar = gate[0, 0].real
     ai = gate[0, 0].imag
     br = gate[0, 1].real
@@ -93,21 +97,16 @@ class Simulator
 
     i = 0
     (0...@state_vector.size).each do |row|
+      is_controlled = ((control_mask & row) ^ desigred_value_mask) != 0
       qubit_val = (row & (1 << target_bit)) != 0
-      # col = 0
-      # Rails.logger.debug { "row, col = #{row}, #{col}" }
 
-      unless qubit_val
+      if !is_controlled && !qubit_val
         j = i + ((1 << target_bit) * 2)
-        Rails.logger.debug { "i, j = #{i}, #{j}" }
 
         xr = @state_vector[i / 2].real
         xi = @state_vector[i / 2].imag
         yr = @state_vector[j / 2].real
         yi = @state_vector[j / 2].imag
-
-        Rails.logger.debug { "xr = #{xr}, xi = #{xi}" }
-        Rails.logger.debug { "yr = #{yr}, yi = #{yi}" }
 
         @state_vector[i / 2] = Complex((xr * ar) - (xi * ai) + (yr * br) - (yi * bi),
                                        (xr * ai) + (xi * ar) + (yr * bi) + (yi * br))
@@ -121,6 +120,14 @@ class Simulator
     @state_vector
   end
 
+  def cu(controls, gate, target_bit)
+    control_mask = controls.reduce(0) do |result, each|
+      result | (1 << each)
+    end
+
+    times_qubit_operation(gate, target_bit, control_mask, control_mask)
+  end
+
   def probability_zero(target_bit)
     probability = 0
 
@@ -131,3 +138,4 @@ class Simulator
     probability
   end
 end
+# rubocop:enable Metrics/ClassLength
