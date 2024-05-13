@@ -338,7 +338,11 @@ class CircuitsControllerTest
   end
 
   class MeasurementGateTest < GateTest
-    test 'Measurement(0) 回路を計算' do
+    test <<~TEST do
+         ┌─┐
+      q: ┤M├
+         └─┘
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [["Measurement"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
@@ -346,7 +350,13 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[1]
     end
 
-    test 'Measurement(1) 回路を計算' do
+    test <<~TEST do
+      q_0: ───
+           ┌─┐
+      q_1: ┤M├
+           └─┘
+      end
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [[1, "Measurement"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
@@ -356,7 +366,13 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[3]
     end
 
-    test 'Measurement(1, 2) 回路を計算' do
+    test <<~TEST do
+           ┌─┐
+      q_0: ┤M├
+           ├─┤
+      q_1: ┤M├
+           └─┘
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [["Measurement", "Measurement"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
