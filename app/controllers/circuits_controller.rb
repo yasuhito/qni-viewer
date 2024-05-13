@@ -6,6 +6,7 @@ require 'simulator'
 class CircuitsController < ApplicationController
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/MethodLength
   def show
     @circuit_json = params['circuit_json']
 
@@ -26,16 +27,20 @@ class CircuitsController < ApplicationController
           @simulator.h bit
         when 'X'
           controls = each.map.with_index { |each, index| index if each == '•' }.compact
-          if controls.empty?
-            @simulator.x bit
+          anti_controls = each.map.with_index { |each, index| index if each == '◦' }.compact
+
+          if controls.length.positive? || anti_controls.length.positive?
+            @simulator.cnot bit, controls, anti_controls
           else
-            @simulator.cnot bit, controls
+            @simulator.x bit
           end
         when 'Y'
           @simulator.y bit
         when 'Z'
           @simulator.z bit
         when '•'
+          # nop
+        when '◦'
           # nop
         when '|0>'
           @simulator.write 0, bit
@@ -53,4 +58,5 @@ class CircuitsController < ApplicationController
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/MethodLength
 end

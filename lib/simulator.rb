@@ -44,8 +44,15 @@ class Simulator
     self
   end
 
-  def cnot(target_bit, controls)
-    cu controls, X, target_bit
+  def cnot(target_bit, controls, anti_controls)
+    anti_controls.each do |each|
+      @state_vector = times_qubit_operation(X, each)
+    end
+    cu controls + anti_controls, X, target_bit
+    anti_controls.each do |each|
+      @state_vector = times_qubit_operation(X, each)
+    end
+
     self
   end
 
