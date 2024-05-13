@@ -189,3 +189,30 @@ q_1: ┤|1>├
 
 JSON:
 `{ circuit_json: '{ "cols": [[1, "|1>"]] }' }`
+
+
+### Measurement ゲート
+#### 0 ビット目
+
+量子回路:
+```
+   ┌─┐
+q: ┤M├
+   └─┘
+```
+
+JSON:
+`{ circuit_json: '{ "cols": [["Measurement"]] }' }`
+
+#### 1 ビット目
+
+量子回路:
+```
+q_0: ───
+     ┌─┐
+q_1: ┤M├
+     └─┘
+```
+
+JSON:
+`{ circuit_json: '{ "cols": [[1, "Measurement"]] }' }`
