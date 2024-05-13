@@ -18,6 +18,7 @@ class CircuitsController < ApplicationController
     @simulator = Simulator.new('0' * qubit_count)
 
     # 回路のそれぞれのステップを実行
+    # rubocop:disable Metrics/BlockLength
     circuit_data['cols'].each do |each|
       each.each_with_index do |gate, bit|
         case gate
@@ -42,6 +43,12 @@ class CircuitsController < ApplicationController
           # nop
         when '◦'
           # nop
+        when 'Swap'
+          swaps = each.map.with_index { |each, index| index if each == 'Swap' }.compact
+          break if swaps.length != 2
+          break if swaps.min != bit
+
+          @simulator.swap swaps[0], swaps[1]
         when '|0>'
           @simulator.write 0, bit
         when '|1>'
@@ -53,6 +60,7 @@ class CircuitsController < ApplicationController
         end
       end
     end
+    # rubocop:enable Metrics/BlockLength
 
     CircuitJsonBroadcastJob.perform_now({ circuit_json: @circuit_json, state_vector: @simulator.state })
   end

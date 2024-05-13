@@ -56,6 +56,11 @@ class Simulator
     self
   end
 
+  def swap(target0, target1)
+    cnot(target0, [target1], []).cnot(target1, [target0], []).cnot(target0, [target1], [])
+    self
+  end
+
   def write(value, target_bit)
     p_zero = probability_zero(target_bit).round(5)
     x(target_bit) if (value.zero? && p_zero.zero?) || (value == 1 && p_zero == 1)

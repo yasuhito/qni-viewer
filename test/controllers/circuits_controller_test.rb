@@ -245,6 +245,38 @@ class CircuitsControllerTest
     end
   end
 
+  class SwapGateTest < GateTest
+    test <<~TEST do
+           ┌───┐
+      q_0: ┤ X ├─X─
+           └───┘ │
+      q_1: ──────X─
+    TEST
+      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["Swap", "Swap"]] }' }, as: :json
+
+      assert_equal 4, amplitudes.length
+      assert_equal 0, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 1, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+    end
+
+    test <<~TEST do
+      q_0: ──────X─
+           ┌───┐ │
+      q_1: ┤ X ├─X─
+           └───┘
+    TEST
+      get circuit_path, params: { circuit_json: '{ "cols": [[1, "X"], ["Swap", "Swap"]] }' }, as: :json
+
+      assert_equal 4, amplitudes.length
+      assert_equal 0, amplitudes[0]
+      assert_equal 1, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+    end
+  end
+
   class Write0GateTest < GateTest
     test <<~TEST do
          ┌───┐
