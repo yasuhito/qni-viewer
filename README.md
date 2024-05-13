@@ -193,6 +193,19 @@ JSON:
 `{ circuit_json: '{ "cols": [["X", "◦"]] }' }`
 
 
+### Swap ゲート
+
+量子回路:
+```
+q_0: ─X─
+      │ 
+q_1: ─X─
+```
+
+JSON:
+`{ circuit_json: '{ "cols": [["Swap", "Swap"]] }' }`
+
+
 ### |0> ゲート
 #### 0 ビット目
 
