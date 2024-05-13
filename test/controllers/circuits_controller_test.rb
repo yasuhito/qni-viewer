@@ -18,7 +18,11 @@ class CircuitsControllerTest
   end
 
   class HGateTest < GateTest
-    test 'H(0) 回路を計算' do
+    test <<~TEST do
+         ┌───┐
+      q: ┤ H ├
+         └───┘
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [["H"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
@@ -26,7 +30,13 @@ class CircuitsControllerTest
       assert_equal '√½', amplitudes[1].to_h
     end
 
-    test 'H(1) 回路を計算' do
+    test <<~TEST do
+      q_0: ─────
+           ┌───┐
+      q_1: ┤ H ├
+           └───┘
+      end
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [[1, "H"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
@@ -36,7 +46,13 @@ class CircuitsControllerTest
       assert_equal '0', amplitudes[3].to_h
     end
 
-    test 'H(1, 2) 回路を計算' do
+    test <<~TEST do
+           ┌───┐
+      q_0: ┤ H ├
+           ├───┤
+      q_1: ┤ H ├
+           └───┘
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [["H", "H"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
