@@ -246,32 +246,48 @@ class CircuitsControllerTest
   end
 
   class Write0GateTest < GateTest
-    test '|0>(0) 回路を計算' do
+    test <<~TEST do
+         ┌───┐
+      q: ┤|0>├
+         └───┘
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [["|0>"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
-      assert_equal '1', amplitudes[0].to_h
-      assert_equal '0', amplitudes[1].to_h
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
     end
 
-    test '|0>(1) 回路を計算' do
+    test <<~TEST do
+      q_0: ─────
+           ┌───┐
+      q_1: ┤|0>├
+           └───┘
+      end
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [[1, "|0>"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
-      assert_equal '1', amplitudes[0].to_h
-      assert_equal '0', amplitudes[1].to_h
-      assert_equal '0', amplitudes[2].to_h
-      assert_equal '0', amplitudes[3].to_h
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
     end
 
-    test '|0>(1, 2) 回路を計算' do
+    test <<~TEST do
+           ┌───┐
+      q_0: ┤|0>├
+           ├───┤
+      q_1: ┤|0>├
+           └───┘
+    TEST
       get circuit_path, params: { circuit_json: '{ "cols": [["|0>", "|0>"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
-      assert_equal '1', amplitudes[0].to_h
-      assert_equal '0', amplitudes[1].to_h
-      assert_equal '0', amplitudes[2].to_h
-      assert_equal '0', amplitudes[3].to_h
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
     end
   end
 
