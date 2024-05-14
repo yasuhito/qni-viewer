@@ -2,6 +2,7 @@
 
 require 'state_vector'
 require 'matrix'
+require 'keisan'
 
 # 量子回路シミュレータ
 # rubocop:disable Metrics/ClassLength
@@ -42,6 +43,15 @@ class Simulator
   def z(target_bit)
     @state_vector = times_qubit_operation(Z, target_bit)
     self
+  end
+
+  def phase(phi, target_bit)
+    calculator = Keisan::Calculator.new
+    radian = calculator.evaluate(phi.gsub('π', 'x'), x: Math::PI)
+    phase = Matrix[[1, 0],
+                   [0, Math::E**(Complex::I * radian)]]
+
+    cu([], phase, target_bit)
   end
 
   def cnot(target_bit, controls, anti_controls)
