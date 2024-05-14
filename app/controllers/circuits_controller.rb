@@ -40,8 +40,7 @@ class CircuitsController < ApplicationController
         when 'Z'
           @simulator.z bit
         when /^P\((.+)\)/
-          phase = Regexp.last_match(1).gsub('_', '/')
-          @simulator.phase phase, bit
+          @simulator.phase Regexp.last_match(1), bit
         when '•'
           # nop
         when '◦'

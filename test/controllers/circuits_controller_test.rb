@@ -207,7 +207,7 @@ class CircuitsControllerTest
       q: ┤ P(π/2) ├
          └────────┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["P(π_2)"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: '{ "cols": [["P(π/2)"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -219,7 +219,7 @@ class CircuitsControllerTest
       q: ┤ H ├┤ P(π/2) ├
          └───┘└────────┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["H"], ["P(π_2)"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: '{ "cols": [["H"], ["P(π/2)"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal '√½', amplitudes[0].to_h
