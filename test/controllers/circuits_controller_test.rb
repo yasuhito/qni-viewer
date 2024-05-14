@@ -201,6 +201,32 @@ class CircuitsControllerTest
     end
   end
 
+  class PhaseGateTest < GateTest
+    test <<~TEST do
+         ┌────────┐
+      q: ┤ P(π/2) ├
+         └────────┘
+    TEST
+      get circuit_path, params: { circuit_json: '{ "cols": [["P(π_2)"]] }' }, as: :json
+
+      assert_equal 2, amplitudes.length
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+    end
+
+    test <<~TEST do
+         ┌───┐┌────────┐
+      q: ┤ H ├┤ P(π/2) ├
+         └───┘└────────┘
+    TEST
+      get circuit_path, params: { circuit_json: '{ "cols": [["H"], ["P(π_2)"]] }' }, as: :json
+
+      assert_equal 2, amplitudes.length
+      assert_equal '√½', amplitudes[0].to_h
+      assert_equal '√½i', amplitudes[1].to_h
+    end
+  end
+
   class CnotGateTest < GateTest
     test 'Cnot (X が発火しない)' do
       get circuit_path, params: { circuit_json: '{ "cols": [["•", "X"]] }' }, as: :json
