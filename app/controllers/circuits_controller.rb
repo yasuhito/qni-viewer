@@ -35,6 +35,8 @@ class CircuitsController < ApplicationController
           else
             @simulator.x bit
           end
+        when 'X^½'
+          @simulator.rnot bit
         when 'Y'
           @simulator.y bit
         when 'Z'
@@ -55,7 +57,7 @@ class CircuitsController < ApplicationController
           @simulator.write 0, bit
         when '|1>'
           @simulator.write 1, bit
-        when 'Measurement'
+        when 'Measure'
           @simulator.measure bit
         else
           raise "Unknown gate: #{gate}"

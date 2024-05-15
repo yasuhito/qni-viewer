@@ -215,6 +215,18 @@ class CircuitsControllerTest
     end
 
     test <<~TEST do
+         ┌─────────┐
+      q: ┤ P(-π/2) ├
+         └─────────┘
+    TEST
+      get circuit_path, params: { circuit_json: '{ "cols": [["P(-π/2)"]] }' }, as: :json
+
+      assert_equal 2, amplitudes.length
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+    end
+
+    test <<~TEST do
          ┌───┐┌────────┐
       q: ┤ H ├┤ P(π/2) ├
          └───┘└────────┘
@@ -401,7 +413,7 @@ class CircuitsControllerTest
       q: ┤M├
          └─┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Measurement"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: '{ "cols": [["Measure"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -415,7 +427,7 @@ class CircuitsControllerTest
            └─┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "Measurement"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: '{ "cols": [[1, "Measure"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -431,7 +443,7 @@ class CircuitsControllerTest
       q_1: ┤M├
            └─┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Measurement", "Measurement"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: '{ "cols": [["Measure", "Measure"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -441,13 +453,13 @@ class CircuitsControllerTest
     end
 
     test '測定結果が 0' do
-      get circuit_path, params: { circuit_json: '{ "cols": [["Measurement"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: '{ "cols": [["Measure"]] }' }, as: :json
 
       assert_equal 0, measured_bits[0]
     end
 
     test '測定結果が 1' do
-      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["Measurement"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["Measure"]] }' }, as: :json
 
       assert_equal 1, measured_bits[0]
     end

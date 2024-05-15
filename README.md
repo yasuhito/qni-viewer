@@ -288,7 +288,7 @@ JSON:
 `{ circuit_json: '{ "cols": [[1, "|1>"]] }' }`
 
 
-### Measurement ゲート
+### Measure ゲート
 #### 0 ビット目
 
 量子回路:
@@ -299,7 +299,7 @@ q: ┤M├
 ```
 
 JSON:
-`{ circuit_json: '{ "cols": [["Measurement"]] }' }`
+`{ circuit_json: '{ "cols": [["Measure"]] }' }`
 
 #### 1 ビット目
 
@@ -312,4 +312,4 @@ q_1: ┤M├
 ```
 
 JSON:
-`{ circuit_json: '{ "cols": [[1, "Measurement"]] }' }`
+`{ circuit_json: '{ "cols": [[1, "Measure"]] }' }`
