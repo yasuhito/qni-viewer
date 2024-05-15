@@ -6,22 +6,29 @@
 * 適当なディレクトリに qni-viewer を git clone
 * `cd qni-viewer`
 * `bundle` (依存するライブラリをインストール)
-* `./bin/rails server` (起動)
 
 
 ## 使い方
 
-* ブラウザで `http://localhost:3000` を開く
-*  Qni で好きな回路を作り、URL 後半の文字列 (`%7B%22cols%22...` みたいなもの) をコピー
-* `./send_circuit_json [コピーした文字列]`
+**シミュレータの起動 (Qniサーバの起動):**
+* `./bin/rails server`
+
+**量子回路の表示:**
+* ブラウザで `http://localhost:3000` を開いておく
+
+**量子回路を計算 (クライアントの実行):**
+* 後述のフォーマットに従って量子回路の JSON を書き、適当なファイルに保存
+  * 回路ファイルの例は `examples/` 以下
+* `./send_circuit_json [回路ファイル名]`
+
 
 ## 実行例
 
 `send_circuit_json` を実行すると、実行結果の状態ベクトルの各要素 (複素数) が計算されて以下のように表示される。
 
 ```
-$ ./send_circuit_json %7B%22cols%22%3A%5B%5B%22H%22%2C1%2C%22H%22%5D%5D%7D
-[{"real":0.4999999999999999,"imag":0.0},{"real":0.4999999999999999,"imag":0.0},{"real":0.0,"imag":0.0},{"real":0.0,"imag":0.0},{"real":0.4999999999999999,"imag":0.0},{"real":0.4999999999999999,"imag":0.0},{"real":0.0,"imag":0.0},{"real":0.0,"imag":0.0}]
+$ ./send_circuit_json ./examples/random_bit.json
+{"state_vector":[{"real":0.0,"imag":0.0},{"real":1.0000000000000002,"imag":0.0}],"measured_bits":[1]}
 ```
 
 ブラウザには投入した回路の回路図と実行結果が表示される。
