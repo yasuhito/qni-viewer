@@ -10,7 +10,7 @@
 
 ## 使い方
 
-**シミュレータの起動 (Qniサーバの起動):**
+**シミュレータの起動 (Qni サーバの起動):**
 * `./bin/rails server`
 
 **量子回路の表示:**
@@ -32,6 +32,14 @@ $ ./send_circuit_json ./examples/random_bit.json
 ```
 
 ブラウザには投入した回路の回路図と実行結果が表示される。
+
+
+`send_circuit_json` の `--step NUMBER` でステップ番号を指定すると、指定したステップでの状態ベクトルを表示できる。
+
+```
+$ ./send_circuit_json ./examples/random_bit.json --step 1
+{"state_vector":[{"real":0.7071067811865476,"imag":0.0},{"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}
+```
 
 
 ## 量子回路の JSON フォーマット

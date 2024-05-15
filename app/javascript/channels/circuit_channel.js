@@ -14,10 +14,19 @@ consumer.subscriptions.create("CircuitChannel", {
 
   received(data) {
     const circuit_json = data["circuit_json"];
+    const step = data["step"];
 
     // Called when there's incoming data on the websocket for this channel
     const circuit_el = document.getElementById("circuit");
     circuit_el.dataset.json = circuit_json;
+
+    circuit_el.steps.forEach((each, index) => {
+      if (index === step) {
+        each.active = true;
+      } else {
+        each.active = false;
+      }
+    });
 
     const circuit_json_el = document.getElementById("circuit-json");
     circuit_json_el.innerText = circuit_json;

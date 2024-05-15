@@ -15,11 +15,15 @@ class CircuitsController < ApplicationController
     circuit_data = JSON.parse(@circuit_json)
     qubit_count = circuit_data['cols'].map(&:length).max
 
+    @step = params['step'] || (circuit_data['cols'].length - 1)
+
     @simulator = Simulator.new('0' * qubit_count)
 
     # 回路のそれぞれのステップを実行
     # rubocop:disable Metrics/BlockLength
-    circuit_data['cols'].each do |each|
+    circuit_data['cols'].each_with_index do |each, step_index|
+      break if step_index > @step
+
       each.each_with_index do |gate, bit|
         case gate
         when 1
@@ -66,7 +70,7 @@ class CircuitsController < ApplicationController
     end
     # rubocop:enable Metrics/BlockLength
 
-    CircuitJsonBroadcastJob.perform_now({ circuit_json: @circuit_json, state_vector: @simulator.state })
+    CircuitJsonBroadcastJob.perform_now({ circuit_json: @circuit_json, step: @step, state_vector: @simulator.state })
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity

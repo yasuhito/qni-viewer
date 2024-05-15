@@ -4,22 +4,34 @@
 require 'json'
 require 'net/http'
 require 'uri'
+require 'optparse'
 
-circuit_json = File.read(ARGV[0]).chomp
+params = {}
 
-uri = URI.parse('http://localhost:3000/')
-request = Net::HTTP::Get.new(uri)
-request.content_type = 'application/json'
-request['Accept'] = 'application/json'
-request.body = JSON.dump({
-                           'circuit_json' => circuit_json
-                         })
-
-req_options = {
-  use_ssl: uri.scheme == 'https'
-}
+opt = OptionParser.new
+opt.on('-s NUMBER', '--step NUMBER') { |v| params[:step] = v }
+opt.parse!(ARGV)
 
 begin
+  circuit_json = File.read(ARGV[0]).chomp
+
+  circuit_cols = JSON.parse(circuit_json).fetch('cols')
+  step = params[:step]&.to_i
+  raise "Error: step #{step} is out of range." if step.negative? || (step >= circuit_cols.length)
+
+  uri = URI.parse('http://localhost:3000/')
+  request = Net::HTTP::Get.new(uri)
+  request.content_type = 'application/json'
+  request['Accept'] = 'application/json'
+  request.body = JSON.dump({
+                             'circuit_json' => circuit_json,
+                             'step' => params[:step] ? params[:step].to_i : nil
+                           })
+
+  req_options = {
+    use_ssl: uri.scheme == 'https'
+  }
+
   response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
     http.request(request)
   end
