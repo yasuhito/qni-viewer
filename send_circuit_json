@@ -1,17 +1,34 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'cgi'
+require 'json'
+require 'net/http'
+require 'uri'
 
-json = File.read(ARGV[0]).chomp
+circuit_json = File.read(ARGV[0]).chomp
 
-# json = CGI.unescape(ARGV[0]).gsub('"') { '\"' }
-json_escaped = CGI.unescape(json).gsub('"') { '\"' }
+uri = URI.parse('http://localhost:3000/')
+request = Net::HTTP::Get.new(uri)
+request.content_type = 'application/json'
+request['Accept'] = 'application/json'
+request.body = JSON.dump({
+                           'circuit_json' => circuit_json
+                         })
 
-system <<~COMMAND
-  curl -H "accept: application/json" \
-       -H "Content-Type: application/json" \
-       -d '{"circuit_json": "#{json_escaped}"}' \
-       -w'\\n' \
-       -XGET http://localhost:3000/
-COMMAND
+req_options = {
+  use_ssl: uri.scheme == 'https'
+}
+
+begin
+  response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+    http.request(request)
+  end
+
+  if response.code == '200'
+    puts response.body
+  else
+    warn "Error (code = #{response.code}). See Rails server log for details."
+  end
+rescue StandardError => e
+  warn e
+end
