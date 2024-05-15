@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'matrix'
+require_relative 'vector'
 
 # 状態ベクトルとその各種操作
 class StateVector

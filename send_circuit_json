@@ -3,12 +3,15 @@
 
 require 'cgi'
 
-json = CGI.unescape(ARGV[0]).gsub('"') { '\"' }
+json = File.read(ARGV[0]).chomp
+
+# json = CGI.unescape(ARGV[0]).gsub('"') { '\"' }
+json_escaped = CGI.unescape(json).gsub('"') { '\"' }
 
 system <<~COMMAND
   curl -H "accept: application/json" \
        -H "Content-Type: application/json" \
-       -d '{"circuit_json": "#{json}"}' \
+       -d '{"circuit_json": "#{json_escaped}"}' \
        -w'\\n' \
        -XGET http://localhost:3000/
 COMMAND

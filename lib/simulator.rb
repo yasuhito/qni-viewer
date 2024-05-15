@@ -16,6 +16,8 @@ class Simulator
              [Complex::I, 0]]
   Z = Matrix[[1, 0],
              [0, -1]]
+  RNOT = Matrix[[Complex::I + 1, -Complex::I + 1],
+                [-Complex::I + 1, Complex::I + 1]] * 0.5
 
   attr_reader :measured_bits
 
@@ -42,6 +44,11 @@ class Simulator
 
   def z(target_bit)
     @state_vector = times_qubit_operation(Z, target_bit)
+    self
+  end
+
+  def rnot(target_bit)
+    @state_vector = times_qubit_operation(RNOT, target_bit)
     self
   end
 
