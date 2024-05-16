@@ -21,7 +21,7 @@ class Simulator
   Z = Matrix[[1, 0],
              [0, -1]]
   RNOT = Matrix[[i + 1, -i + 1],
-                [-i + 1, i + 1]] * 0.5
+                [-i + 1, i + 1]] * Fraction('½')
 
   attr_reader :measured_bits
 

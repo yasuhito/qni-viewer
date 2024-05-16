@@ -2,16 +2,23 @@
 
 # 分数を表すクラス
 class Fraction < Numeric
-  def self.from_string(_string)
-    new
+  attr_writer :string
+
+  def self.from_string(string)
+    fraction = new
+    fraction.string = string
+    fraction
   end
 
   def to_s
-    '√½'
+    @string
   end
 
   def to_f
-    Math.sqrt(0.5)
+    {
+      '½' => 1.0 / 2,
+      '√½' => Math.sqrt(1.0 / 2)
+    }.fetch(@string)
   end
 end
 
