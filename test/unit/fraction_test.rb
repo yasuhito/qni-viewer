@@ -32,4 +32,14 @@ class FractionTest < ActiveSupport::TestCase
     assert_in_delta 3 / Math.sqrt(2), matrix[1, 0]
     assert_in_delta 4 / Math.sqrt(2), matrix[1, 1]
   end
+
+  test 'from 0' do
+    fraction = Fraction.from_number(0)
+    assert_equal '0', fraction.to_s
+  end
+
+  test 'from 0.5' do
+    fraction = Fraction.from_number(0.5)
+    assert_equal '½', fraction.to_s
+  end
 end
