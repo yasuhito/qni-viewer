@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# 分数を表すクラス
+# 分数を表すクラス。
+# Matrix とそのまま掛け算などを計算できるようにするために、
+# Numeric クラスを継承する。
 class Fraction < Numeric
   UNICODE_FRACTIONS = [
     { character: '½', value: 1.0 / 2 },
