@@ -2,7 +2,7 @@
 
 ## セットアップ
 
-* Ruby 2.7.4 をインストール (rvm 等お好きなツールで OK)
+* Ruby 3.2.2 をインストール (rvm 等お好きなツールで OK)
 * 適当なディレクトリに qni-viewer を git clone
 * `cd qni-viewer`
 * `bundle` (依存するライブラリをインストール)
