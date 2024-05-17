@@ -17,7 +17,7 @@ begin
 
   circuit_cols = JSON.parse(circuit_json).fetch('cols')
   step = params[:step]&.to_i
-  raise "Error: step #{step} is out of range." if step.negative? || (step >= circuit_cols.length)
+  raise "Error: step #{step} is out of range." if step && (step.negative? || (step >= circuit_cols.length))
 
   uri = URI.parse('http://localhost:3000/')
   request = Net::HTTP::Get.new(uri)
