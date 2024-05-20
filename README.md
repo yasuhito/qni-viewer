@@ -6,6 +6,7 @@
 * 適当なディレクトリに qni-viewer を git clone
 * `cd qni-viewer`
 * `bundle` (依存するライブラリをインストール)
+* `./bin/rails tailwindcss:build` (CSS を生成) 
 
 
 ## 使い方
