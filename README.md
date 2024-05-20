@@ -70,13 +70,14 @@ $ ./send_circuit_json ./examples/random_bit.json | jsonpp
 
 HTTP リクエストの送信先 URL は `http://localhost:3000/` で、エンドポイントもこれ 1 つ (回路の実行のみ)。
 
-回路を実行するには、回路を JSON エンコードした文字列をパラメータとして渡す。
+回路を実行するには、回路を JSON エンコードした文字列と、ステップ番号をパラメータとして渡す。
 
 ###### Example JSON Request
 
 ``` json
 {
-  "circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}"
+  "circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}",
+  "step": 1
 }
 ```
 
@@ -88,14 +89,16 @@ q: ┤|0>├┤ H ├┤M├
    └───┘└───┘└─┘
 ```
 
-これを計算するリクエストは次のように cURL で送ることができる:
+ステップ 1 (`H` ゲートの直後) までを計算するリクエストは次のように cURL で送ることができる:
 
 ``` shell
 curl -H "accept: application/json" \
        -H "Content-Type: application/json" \
-       -d '{"circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}"}' \
+       -d '{"circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}", "step": 1}' \
        -XGET http://localhost:3000/
 ```
+
+以下に、各ゲートの JSON フォーマットを説明する。
 
 
 ## 量子回路の JSON フォーマット
