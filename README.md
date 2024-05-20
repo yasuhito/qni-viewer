@@ -41,6 +41,37 @@ $ ./send_circuit_json ./examples/random_bit.json --step 1
 {"state_vector":[{"real":0.7071067811865476,"imag":0.0},{"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}
 ```
 
+## HTTP リクエストの送信
+
+HTTP リクエストの送信先 URL は `http://localhost:3000/` で、エンドポイントもこれ 1 つ (回路の実行のみ)。
+
+回路を実行するには、回路を JSON エンコードした文字列をパラメータとして渡す。
+
+###### Example JSON Request
+
+``` json
+{
+  "circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}"
+}
+```
+
+たとえば `|0>`、`H` ゲートの後に測定する以下の回路について、
+
+``` text
+   ┌───┐┌───┐┌─┐
+q: ┤|0>├┤ H ├┤M├
+   └───┘└───┘└─┘
+```
+
+これを計算するリクエストは次のように cURL で送ることができる:
+
+``` shell
+curl -H "accept: application/json" \
+       -H "Content-Type: application/json" \
+       -d '{"circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}"}' \
+       -XGET http://localhost:3000/
+```
+
 
 ## 量子回路の JSON フォーマット
 
