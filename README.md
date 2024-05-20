@@ -17,13 +17,15 @@
 **量子回路の表示:**
 * ブラウザで `http://localhost:3000` を開いておく
 
-**量子回路を計算 (クライアントの実行):**
+**量子回路の計算をリクエスト:**
 * 後述のフォーマットに従って量子回路の JSON を書き、適当なファイルに保存
   * 回路ファイルの例は `examples/` 以下
 * `./send_circuit_json [回路ファイル名]`
 
+または、後述するように HTTP リクエストを送信することでも `send_circuit_json` と同様のことができる。
 
-## 実行例
+
+## `send_circuit_json` コマンド実行例
 
 `send_circuit_json` を実行すると、実行結果の状態ベクトルの各要素 (複素数) が計算されて以下のように表示される。
 
@@ -34,7 +36,6 @@ $ ./send_circuit_json ./examples/random_bit.json
 
 ブラウザには投入した回路の回路図と実行結果が表示される。
 
-
 `send_circuit_json` の `--step NUMBER` でステップ番号を指定すると、指定したステップでの状態ベクトルを表示できる。
 
 ```
@@ -42,7 +43,10 @@ $ ./send_circuit_json ./examples/random_bit.json --step 1
 {"state_vector":[{"real":0.7071067811865476,"imag":0.0},{"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}
 ```
 
+
 ## HTTP リクエストの送信
+
+`send_circuit_json` を実行する代わりに、HTTP リクエストを Qni サーバへ送ることで量子回路計算を実行できる。
 
 HTTP リクエストの送信先 URL は `http://localhost:3000/` で、エンドポイントもこれ 1 つ (回路の実行のみ)。
 
