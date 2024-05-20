@@ -43,6 +43,26 @@ $ ./send_circuit_json ./examples/random_bit.json --step 1
 {"state_vector":[{"real":0.7071067811865476,"imag":0.0},{"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}
 ```
 
+出力の JSON は、パイプで [jsonpp](https://jmhodges.github.io/jsonpp/) に通すと整形して表示できる。
+
+```
+$ ./send_circuit_json ./examples/random_bit.json | jsonpp
+{
+  "state_vector": [
+    {
+      "real": 1.0,
+      "imag": 0.0
+    },
+    {
+      "real": 0.0,
+      "imag": 0.0
+    }
+  ],
+  "measured_bits": [
+    0
+  ]
+}
+```
 
 ## HTTP リクエストの送信
 
