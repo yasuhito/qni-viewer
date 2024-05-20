@@ -92,13 +92,16 @@ q: ┤|0>├┤ H ├┤M├
 これを実行するための HTTP リクエストは、たとえば cURL では次のように送れる:
 
 ``` shell
-curl -H "accept: application/json" \
+$ curl -H "accept: application/json" \
        -H "Content-Type: application/json" \
        -d '{"circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}", "step": 1}' \
        -XGET http://localhost:3000/
+{"state_vector":[{"real":0.7071067811865476,"imag":0.0},{"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}       
 ```
 
-以下に、各ゲートの JSON フォーマットを説明する。
+レスポンスのボディとして、状態ベクトルの振幅 (複素数の実部と虚部) が配列で戻ってくる。
+
+以下に、各ゲートの JSON フォーマットをゲート別に説明する。
 
 
 ## 量子回路の JSON フォーマット
