@@ -43,12 +43,12 @@ module CoreExt
       return '0' if number.abs < epsilon
       return "-#{abbreviate_float(-number, epsilon)}" if number.negative?
 
-      fraction = match_unicode_fraction do |each|
+      fraction = Fraction.match_unicode_fraction do |each|
         (each.fetch(:value) - number).abs <= epsilon
       end
       return fraction.fetch(:character) if fraction
 
-      root_fraction = match_unicode_fraction do |each|
+      root_fraction = Fraction.match_unicode_fraction do |each|
         (Math.sqrt(each.fetch(:value)) - number).abs <= epsilon
       end
       return "√#{root_fraction.fetch(:character)}" if root_fraction
@@ -62,14 +62,6 @@ module CoreExt
       prefix = real.negative? ? '' : '+'
 
       "#{prefix + abbreviate_float(real) + separator + imag_factor}i"
-    end
-
-    def match_unicode_fraction(&block)
-      UNICODE_FRACTIONS.each do |each|
-        return each if block.yield(each)
-      end
-
-      nil
     end
   end
 end
