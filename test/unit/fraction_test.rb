@@ -51,6 +51,21 @@ class FractionTest < ActiveSupport::TestCase
       fraction = Fraction.from_number(1.0 / 5)
       assert_equal '⅕', fraction.to_s
     end
+
+    test 'from 2/5' do
+      fraction = Fraction.from_number(2.0 / 5)
+      assert_equal '⅖', fraction.to_s
+    end
+
+    test 'from 3/5' do
+      fraction = Fraction.from_number(3.0 / 5)
+      assert_equal '⅗', fraction.to_s
+    end
+
+    test 'from 4/5' do
+      fraction = Fraction.from_number(4.0 / 5)
+      assert_equal '⅘', fraction.to_s
+    end
   end
 
   test 'Matrix * ½' do
