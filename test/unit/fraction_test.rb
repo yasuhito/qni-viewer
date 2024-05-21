@@ -15,11 +15,23 @@ class FractionTest < ActiveSupport::TestCase
     assert_equal '√½', fraction.to_s
   end
 
+  class FindWithCloseValueTest < ActiveSupport::TestCase
+    test '½' do
+      fraction = Fraction.find_with_close_value(1.0 / 2)
+      assert_equal '½', fraction.to_s
+    end
+  end
+
   # TODO: Numeric との比較テストも追加 (assert_equal 0, Fraction.from_number(0))
   class FromNumberTest < ActiveSupport::TestCase
     test 'from 0' do
       fraction = Fraction.from_number(0)
       assert_equal '0', fraction.to_s
+    end
+
+    test 'from 1' do
+      fraction = Fraction.from_number(1)
+      assert_nil fraction
     end
 
     test 'from 1/2' do

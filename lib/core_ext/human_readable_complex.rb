@@ -1,26 +1,5 @@
 # frozen_string_literal: true
 
-UNICODE_FRACTIONS = [
-  { character: '½', value: 1.0 / 2 },
-  { character: '¼', value: 1.0 / 4 },
-  { character: '¾', value: 3.0 / 4 },
-  { character: '⅓', value: 1.0 / 3 },
-  { character: '⅔', value: 2.0 / 3 },
-  { character: '⅕', value: 1.0 / 5 },
-  { character: '⅖', value: 2.0 / 5 },
-  { character: '⅗', value: 3.0 / 5 },
-  { character: '⅘', value: 4.0 / 5 },
-  { character: '⅙', value: 1.0 / 6 },
-  { character: '⅚', value: 5.0 / 6 },
-  { character: '⅐', value: 1.0 / 7 },
-  { character: '⅛', value: 1.0 / 8 },
-  { character: '⅜', value: 3.0 / 8 },
-  { character: '⅝', value: 5.0 / 8 },
-  { character: '⅞', value: 7.0 / 8 },
-  { character: '⅑', value: 1.0 / 9 },
-  { character: '⅒', value: 1.0 / 10 }
-].freeze
-
 module CoreExt
   # Complex クラスに #to_h を追加
   module HumanReadableComplex
@@ -43,15 +22,13 @@ module CoreExt
       return '0' if number.abs < epsilon
       return "-#{abbreviate_float(-number, epsilon)}" if number.negative?
 
-      fraction = Fraction.match_unicode_fraction do |each|
-        (each.fetch(:value) - number).abs <= epsilon
-      end
-      return fraction.fetch(:character) if fraction
+      fraction = Fraction.find_with_close_value(number, epsilon)
+      return fraction.to_s if fraction
 
-      root_fraction = Fraction.match_unicode_fraction do |each|
-        (Math.sqrt(each.fetch(:value)) - number).abs <= epsilon
+      root_fraction = Fraction.find do |each|
+        (Math.sqrt(each) - number).abs <= epsilon
       end
-      return "√#{root_fraction.fetch(:character)}" if root_fraction
+      return "√#{root_fraction}" if root_fraction
 
       number.to_s
     end
