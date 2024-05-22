@@ -22,10 +22,10 @@ module CoreExt
       return '0' if number.abs < epsilon
       return "-#{abbreviate_float(-number, epsilon)}" if number.negative?
 
-      fraction = Fraction.find_with_close_value(number, epsilon)
+      fraction = UnicodeFraction.find_with_close_value(number, epsilon)
       return fraction.to_s if fraction
 
-      root_fraction = Fraction.find do |each|
+      root_fraction = UnicodeFraction.find do |each|
         (Math.sqrt(each) - number).abs <= epsilon
       end
       return "√#{root_fraction}" if root_fraction

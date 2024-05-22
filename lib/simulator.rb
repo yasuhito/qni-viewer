@@ -13,7 +13,7 @@ class Simulator
 
   # TODO: 適切なクラスに移動
   H = Matrix[[1, 1],
-             [1, -1]] * Fraction('√½')
+             [1, -1]] * UnicodeFraction('√½')
   X = Matrix[[0, 1],
              [1, 0]]
   Y = Matrix[[0, -i],
@@ -21,7 +21,7 @@ class Simulator
   Z = Matrix[[1, 0],
              [0, -1]]
   RNOT = Matrix[[i + 1, -i + 1],
-                [-i + 1, i + 1]] * Fraction('½')
+                [-i + 1, i + 1]] * UnicodeFraction('½')
 
   attr_reader :measured_bits
 

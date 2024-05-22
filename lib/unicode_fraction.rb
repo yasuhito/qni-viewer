@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# Unicode でも表せる分数を表すクラス。
+# '½', '⅔' などの Unicode で書ける分数を表すクラス。
 # Matrix とそのまま掛け算などを計算できるようにするために、
 # Numeric クラスを継承する。
-class Fraction < Numeric
+class UnicodeFraction < Numeric
   UNICODE_FRACTIONS = [
     { character: '½', value: 1.0 / 2 },
     { character: '¼', value: 1.0 / 4 },
@@ -61,7 +61,7 @@ class Fraction < Numeric
   end
 
   def self.find_with_close_value(value, epsilon = 0.0005)
-    unicode_fraction = Fraction.find_unicode_fraction do |each|
+    unicode_fraction = UnicodeFraction.find_unicode_fraction do |each|
       (each.fetch(:value) - value).abs <= epsilon
     end
     return unless unicode_fraction
@@ -104,12 +104,12 @@ class Fraction < Numeric
   end
 
   def to_f
-    fraction = Fraction.find_unicode_fraction do |each|
+    fraction = UnicodeFraction.find_unicode_fraction do |each|
       each.fetch(:character) == @string
     end
     return fraction.fetch(:value) if fraction
 
-    fraction = Fraction.find_unicode_fraction do |each|
+    fraction = UnicodeFraction.find_unicode_fraction do |each|
       "√#{each.fetch(:character)}" == @string
     end
     return Math.sqrt(fraction.fetch(:value)) if fraction
@@ -119,7 +119,7 @@ class Fraction < Numeric
 end
 
 # rubocop:disable Naming/MethodName
-def Fraction(string)
-  Fraction.from_string(string)
+def UnicodeFraction(string)
+  UnicodeFraction.from_string(string)
 end
 # rubocop:enable Naming/MethodName
