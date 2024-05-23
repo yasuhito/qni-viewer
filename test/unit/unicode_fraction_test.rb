@@ -5,15 +5,202 @@ require 'test_helper'
 require 'unicode_fraction'
 
 class UnicodeFractionTest < ActiveSupport::TestCase
-  test '½' do
-    fraction = UnicodeFraction('½')
-    assert_equal '½', fraction.to_s
-  end
+  # TODO: '½' とか入力しづらいので、UnicodeFraction('1/2') でも生成できるようにする
+  # TODO: UnicodeFraction.from_number(1.0 / 2) を UnicodeFraction() に統一
+  #
+  # rubocop:disable Metrics/ClassLength
+  class UnicodeFractionCreationFromStringTest < ActiveSupport::TestCase
+    test '0' do
+      fraction = UnicodeFraction('0')
+      assert_equal '0', fraction.to_s
+    end
 
-  test '√½' do
-    fraction = UnicodeFraction('√½')
-    assert_equal '√½', fraction.to_s
+    test '½' do
+      fraction = UnicodeFraction('½')
+      assert_equal '½', fraction.to_s
+    end
+
+    test '√½' do
+      fraction = UnicodeFraction('√½')
+      assert_equal '√½', fraction.to_s
+    end
+
+    test '⅓' do
+      fraction = UnicodeFraction('⅓')
+      assert_equal '⅓', fraction.to_s
+    end
+
+    test '√⅓' do
+      fraction = UnicodeFraction('√⅓')
+      assert_equal '√⅓', fraction.to_s
+    end
+
+    test '⅔' do
+      fraction = UnicodeFraction('⅔')
+      assert_equal '⅔', fraction.to_s
+    end
+
+    test '√⅔' do
+      fraction = UnicodeFraction('√⅔')
+      assert_equal '√⅔', fraction.to_s
+    end
+
+    test '¼' do
+      fraction = UnicodeFraction('¼')
+      assert_equal '¼', fraction.to_s
+    end
+
+    test '√¼' do
+      fraction = UnicodeFraction('√¼')
+      assert_equal '√¼', fraction.to_s
+    end
+
+    test '¾' do
+      fraction = UnicodeFraction('¾')
+      assert_equal '¾', fraction.to_s
+    end
+
+    test '√¾' do
+      fraction = UnicodeFraction('√¾')
+      assert_equal '√¾', fraction.to_s
+    end
+
+    test '⅕' do
+      fraction = UnicodeFraction('⅕')
+      assert_equal '⅕', fraction.to_s
+    end
+
+    test '√⅕' do
+      fraction = UnicodeFraction('√⅕')
+      assert_equal '√⅕', fraction.to_s
+    end
+
+    test '⅖' do
+      fraction = UnicodeFraction('⅖')
+      assert_equal '⅖', fraction.to_s
+    end
+
+    test '√⅖' do
+      fraction = UnicodeFraction('√⅖')
+      assert_equal '√⅖', fraction.to_s
+    end
+
+    test '⅗' do
+      fraction = UnicodeFraction('⅗')
+      assert_equal '⅗', fraction.to_s
+    end
+
+    test '√⅗' do
+      fraction = UnicodeFraction('√⅗')
+      assert_equal '√⅗', fraction.to_s
+    end
+
+    test '⅘' do
+      fraction = UnicodeFraction('⅘')
+      assert_equal '⅘', fraction.to_s
+    end
+
+    test '√⅘' do
+      fraction = UnicodeFraction('√⅘')
+      assert_equal '√⅘', fraction.to_s
+    end
+
+    test '⅙' do
+      fraction = UnicodeFraction('⅙')
+      assert_equal '⅙', fraction.to_s
+    end
+
+    test '√⅙' do
+      fraction = UnicodeFraction('√⅙')
+      assert_equal '√⅙', fraction.to_s
+    end
+
+    test '⅚' do
+      fraction = UnicodeFraction('⅚')
+      assert_equal '⅚', fraction.to_s
+    end
+
+    test '√⅚' do
+      fraction = UnicodeFraction('√⅚')
+      assert_equal '√⅚', fraction.to_s
+    end
+
+    test '⅐' do
+      fraction = UnicodeFraction('⅐')
+      assert_equal '⅐', fraction.to_s
+    end
+
+    test '√⅐' do
+      fraction = UnicodeFraction('√⅐')
+      assert_equal '√⅐', fraction.to_s
+    end
+
+    test '⅛' do
+      fraction = UnicodeFraction('⅛')
+      assert_equal '⅛', fraction.to_s
+    end
+
+    test '√⅛' do
+      fraction = UnicodeFraction('√⅛')
+      assert_equal '√⅛', fraction.to_s
+    end
+
+    test '⅜' do
+      fraction = UnicodeFraction('⅜')
+      assert_equal '⅜', fraction.to_s
+    end
+
+    test '√⅜' do
+      fraction = UnicodeFraction('√⅜')
+      assert_equal '√⅜', fraction.to_s
+    end
+
+    test '⅝' do
+      fraction = UnicodeFraction('⅝')
+      assert_equal '⅝', fraction.to_s
+    end
+
+    test '√⅝' do
+      fraction = UnicodeFraction('√⅝')
+      assert_equal '√⅝', fraction.to_s
+    end
+
+    test '⅞' do
+      fraction = UnicodeFraction('⅞')
+      assert_equal '⅞', fraction.to_s
+    end
+
+    test '√⅞' do
+      fraction = UnicodeFraction('√⅞')
+      assert_equal '√⅞', fraction.to_s
+    end
+
+    test '⅑' do
+      fraction = UnicodeFraction('⅑')
+      assert_equal '⅑', fraction.to_s
+    end
+
+    test '√⅑' do
+      fraction = UnicodeFraction('√⅑')
+      assert_equal '√⅑', fraction.to_s
+    end
+
+    test '⅒' do
+      fraction = UnicodeFraction('⅒')
+      assert_equal '⅒', fraction.to_s
+    end
+
+    test '√⅒' do
+      fraction = UnicodeFraction('√⅒')
+      assert_equal '√⅒', fraction.to_s
+    end
+
+    test '-1' do
+      fraction = UnicodeFraction('-1')
+      assert_nil fraction
+    end
   end
+  # rubocop:enable Metrics/ClassLength
 
   class FindWithCloseValueTest < ActiveSupport::TestCase
     test '½' do

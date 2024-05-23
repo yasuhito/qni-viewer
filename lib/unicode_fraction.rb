@@ -4,12 +4,12 @@
 # Matrix とそのまま掛け算などを計算できるようにするために、
 # Numeric クラスを継承する。
 class UnicodeFraction < Numeric
-  UNICODE_FRACTIONS = [
+  ALL = [
     { character: '½', value: 1.0 / 2 },
-    { character: '¼', value: 1.0 / 4 },
-    { character: '¾', value: 3.0 / 4 },
     { character: '⅓', value: 1.0 / 3 },
     { character: '⅔', value: 2.0 / 3 },
+    { character: '¼', value: 1.0 / 4 },
+    { character: '¾', value: 3.0 / 4 },
     { character: '⅕', value: 1.0 / 5 },
     { character: '⅖', value: 2.0 / 5 },
     { character: '⅗', value: 3.0 / 5 },
@@ -26,12 +26,6 @@ class UnicodeFraction < Numeric
   ].freeze
 
   attr_writer :string
-
-  def self.from_string(string)
-    fraction = new
-    fraction.string = string
-    fraction
-  end
 
   def self.from_number(number, epsilon = 0.0005)
     fraction = new
@@ -60,6 +54,21 @@ class UnicodeFraction < Numeric
     nil
   end
 
+  def self.from_string(string)
+    fraction = new
+
+    fraction_string = '0' if string == '0'
+    UnicodeFraction::ALL.each do |each|
+      fraction_string = each.fetch(:character) if each.fetch(:character) == string
+      fraction_string = "√#{each.fetch(:character)}" if "√#{each.fetch(:character)}" == string
+    end
+
+    return unless fraction_string
+
+    fraction.string = fraction_string
+    fraction
+  end
+
   def self.find_with_close_value(value, epsilon = 0.0005)
     unicode_fraction = UnicodeFraction.find_unicode_fraction do |each|
       (each.fetch(:value) - value).abs <= epsilon
@@ -72,7 +81,7 @@ class UnicodeFraction < Numeric
   end
 
   def self.find(&block)
-    UNICODE_FRACTIONS.each do |each|
+    ALL.each do |each|
       next unless block.yield(each.fetch(:value))
 
       fraction = new
@@ -84,7 +93,7 @@ class UnicodeFraction < Numeric
   end
 
   def self.find_unicode_fraction(&block)
-    UNICODE_FRACTIONS.each do |each|
+    ALL.each do |each|
       return each if block.yield(each)
     end
 
@@ -92,7 +101,7 @@ class UnicodeFraction < Numeric
   end
 
   # def self.match_unicode_fraction(&block)
-  #   UNICODE_FRACTIONS.each do |each|
+  #   ALL.each do |each|
   #     return each if block.yield(each)
   #   end
 
