@@ -108,7 +108,8 @@ class Simulator
     # @state_vector の各要素を複素数に変換した配列を返す
     @state_vector.map do |each|
       c = Complex(each)
-      { real: c.real, imag: c.imag }
+      { magnitude: (c.real**2) + (c.imag**2), phaseDeg: (Math.atan2(c.imag, c.real) / Math::PI) * 180, real: c.real,
+        imag: c.imag }
     end
   end
 

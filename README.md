@@ -31,7 +31,7 @@
 
 ```
 $ ./send_circuit_json ./examples/random_bit.json
-{"state_vector":[{"real":0.0,"imag":0.0},{"real":1.0000000000000002,"imag":0.0}],"measured_bits":[1]}
+{"state_vector":[{"magnitude":0.0,"phaseDeg":0.0,"real":0.0,"imag":0.0},{"magnitude":1.0000000000000004,"phaseDeg":0.0,"real":1.0000000000000002,"imag":0.0}],"measured_bits":[1]}
 ```
 
 ブラウザには投入した回路の回路図と実行結果が表示される。
@@ -40,7 +40,7 @@ $ ./send_circuit_json ./examples/random_bit.json
 
 ```
 $ ./send_circuit_json ./examples/random_bit.json --step 1
-{"state_vector":[{"real":0.7071067811865476,"imag":0.0},{"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}
+{"state_vector":[{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0},{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}
 ```
 
 出力の JSON が長くて読みづらい場合、パイプで [jsonpp](https://jmhodges.github.io/jsonpp/) に通すと整形して表示できる。
@@ -50,16 +50,20 @@ $ ./send_circuit_json ./examples/random_bit.json | jsonpp
 {
   "state_vector": [
     {
-      "real": 1.0,
+      "magnitude": 0.0,
+      "phaseDeg": 0.0,
+      "real": 0.0,
       "imag": 0.0
     },
     {
-      "real": 0.0,
+      "magnitude": 1.0000000000000004,
+      "phaseDeg": 0.0,
+      "real": 1.0000000000000002,
       "imag": 0.0
     }
   ],
   "measured_bits": [
-    0
+    1
   ]
 }
 ```
@@ -96,7 +100,7 @@ $ curl -H "accept: application/json" \
        -H "Content-Type: application/json" \
        -d '{"circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}", "step": 1}' \
        -XGET http://localhost:3000/
-{"state_vector":[{"real":0.7071067811865476,"imag":0.0},{"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}       
+{"state_vector":[{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0},{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]} 
 ```
 
 状態ベクトルはレスポンスのボディとして取得できる (cURL の実行例↑の最後の行)。
