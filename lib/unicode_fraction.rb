@@ -5,24 +5,24 @@
 # Numeric クラスを継承する。
 class UnicodeFraction < Numeric
   ALL = [
-    { character: '½', value: 1.0 / 2 },
-    { character: '⅓', value: 1.0 / 3 },
-    { character: '⅔', value: 2.0 / 3 },
-    { character: '¼', value: 1.0 / 4 },
-    { character: '¾', value: 3.0 / 4 },
-    { character: '⅕', value: 1.0 / 5 },
-    { character: '⅖', value: 2.0 / 5 },
-    { character: '⅗', value: 3.0 / 5 },
-    { character: '⅘', value: 4.0 / 5 },
-    { character: '⅙', value: 1.0 / 6 },
-    { character: '⅚', value: 5.0 / 6 },
-    { character: '⅐', value: 1.0 / 7 },
-    { character: '⅛', value: 1.0 / 8 },
-    { character: '⅜', value: 3.0 / 8 },
-    { character: '⅝', value: 5.0 / 8 },
-    { character: '⅞', value: 7.0 / 8 },
-    { character: '⅑', value: 1.0 / 9 },
-    { character: '⅒', value: 1.0 / 10 }
+    { unicode: '½', expanded: '1/2', value: 1.0 / 2 },
+    { unicode: '⅓', expanded: '1/3', value: 1.0 / 3 },
+    { unicode: '⅔', expanded: '2/3', value: 2.0 / 3 },
+    { unicode: '¼', expanded: '1/4', value: 1.0 / 4 },
+    { unicode: '¾', expanded: '3/4', value: 3.0 / 4 },
+    { unicode: '⅕', expanded: '1/5', value: 1.0 / 5 },
+    { unicode: '⅖', expanded: '2/5', value: 2.0 / 5 },
+    { unicode: '⅗', expanded: '3/5', value: 3.0 / 5 },
+    { unicode: '⅘', expanded: '4/5', value: 4.0 / 5 },
+    { unicode: '⅙', expanded: '1/6', value: 1.0 / 6 },
+    { unicode: '⅚', expanded: '5/6', value: 5.0 / 6 },
+    { unicode: '⅐', expanded: '1/7', value: 1.0 / 7 },
+    { unicode: '⅛', expanded: '1/8', value: 1.0 / 8 },
+    { unicode: '⅜', expanded: '3/8', value: 3.0 / 8 },
+    { unicode: '⅝', expanded: '5/8', value: 5.0 / 8 },
+    { unicode: '⅞', expanded: '7/8', value: 7.0 / 8 },
+    { unicode: '⅑', expanded: '1/9', value: 1.0 / 9 },
+    { unicode: '⅒', expanded: '1/10', value: 1.0 / 10 }
   ].freeze
 
   attr_writer :string
@@ -38,16 +38,16 @@ class UnicodeFraction < Numeric
     unicode_fraction = find_unicode_fraction do |each|
       (each.fetch(:value) - number).abs <= epsilon
     end
-    if unicode_fraction&.fetch(:character)
-      fraction.string = unicode_fraction.fetch(:character)
+    if unicode_fraction&.fetch(:unicode)
+      fraction.string = unicode_fraction.fetch(:unicode)
       return fraction
     end
 
     unicode_fraction = find_unicode_fraction do |each|
       (Math.sqrt(each.fetch(:value)) - number).abs <= epsilon
     end
-    if unicode_fraction&.fetch(:character)
-      fraction.string = "√#{unicode_fraction.fetch(:character)}"
+    if unicode_fraction&.fetch(:unicode)
+      fraction.string = "√#{unicode_fraction.fetch(:unicode)}"
       return fraction
     end
 
@@ -55,16 +55,16 @@ class UnicodeFraction < Numeric
   end
 
   def self.from_string(string)
-    fraction = new
-
     fraction_string = '0' if string == '0'
     UnicodeFraction::ALL.each do |each|
-      fraction_string = each.fetch(:character) if each.fetch(:character) == string
-      fraction_string = "√#{each.fetch(:character)}" if "√#{each.fetch(:character)}" == string
+      fraction_string = each.fetch(:unicode) if each.fetch(:unicode) == string
+      fraction_string = each.fetch(:unicode) if each[:expanded] == string
+      fraction_string = "√#{each.fetch(:unicode)}" if "√#{each.fetch(:unicode)}" == string
     end
 
     return unless fraction_string
 
+    fraction = new
     fraction.string = fraction_string
     fraction
   end
@@ -76,7 +76,7 @@ class UnicodeFraction < Numeric
     return unless unicode_fraction
 
     fraction = new
-    fraction.string = unicode_fraction[:character]
+    fraction.string = unicode_fraction[:unicode]
     fraction
   end
 
@@ -85,7 +85,7 @@ class UnicodeFraction < Numeric
       next unless block.yield(each.fetch(:value))
 
       fraction = new
-      fraction.string = each[:character]
+      fraction.string = each[:unicode]
       return fraction
     end
 
@@ -114,12 +114,12 @@ class UnicodeFraction < Numeric
 
   def to_f
     fraction = UnicodeFraction.find_unicode_fraction do |each|
-      each.fetch(:character) == @string
+      each.fetch(:unicode) == @string
     end
     return fraction.fetch(:value) if fraction
 
     fraction = UnicodeFraction.find_unicode_fraction do |each|
-      "√#{each.fetch(:character)}" == @string
+      "√#{each.fetch(:unicode)}" == @string
     end
     return Math.sqrt(fraction.fetch(:value)) if fraction
 

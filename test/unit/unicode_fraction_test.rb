@@ -15,6 +15,103 @@ class UnicodeFractionTest < ActiveSupport::TestCase
       assert_equal '0', fraction.to_s
     end
 
+    test '1/2' do
+      fraction = UnicodeFraction('1/2')
+      assert_equal '½', fraction.to_s
+    end
+
+    test '1/3' do
+      fraction = UnicodeFraction('1/3')
+      assert_equal '⅓', fraction.to_s
+    end
+
+    test '2/3' do
+      fraction = UnicodeFraction('2/3')
+      assert_equal '⅔', fraction.to_s
+    end
+
+    test '1/4' do
+      fraction = UnicodeFraction('1/4')
+      assert_equal '¼', fraction.to_s
+    end
+
+    test '3/4' do
+      fraction = UnicodeFraction('3/4')
+      assert_equal '¾', fraction.to_s
+    end
+
+    test '1/5' do
+      fraction = UnicodeFraction('1/5')
+      assert_equal '⅕', fraction.to_s
+    end
+
+    test '2/5' do
+      fraction = UnicodeFraction('2/5')
+      assert_equal '⅖', fraction.to_s
+    end
+
+    test '3/5' do
+      fraction = UnicodeFraction('3/5')
+      assert_equal '⅗', fraction.to_s
+    end
+
+    test '4/5' do
+      fraction = UnicodeFraction('4/5')
+      assert_equal '⅘', fraction.to_s
+    end
+
+    test '1/6' do
+      fraction = UnicodeFraction('1/6')
+      assert_equal '⅙', fraction.to_s
+    end
+
+    test '5/6' do
+      fraction = UnicodeFraction('5/6')
+      assert_equal '⅚', fraction.to_s
+    end
+
+    test '1/7' do
+      fraction = UnicodeFraction('1/7')
+      assert_equal '⅐', fraction.to_s
+    end
+
+    test '1/8' do
+      fraction = UnicodeFraction('1/8')
+      assert_equal '⅛', fraction.to_s
+    end
+
+    test '3/8' do
+      fraction = UnicodeFraction('3/8')
+      assert_equal '⅜', fraction.to_s
+    end
+
+    test '5/8' do
+      fraction = UnicodeFraction('5/8')
+      assert_equal '⅝', fraction.to_s
+    end
+
+    test '7/8' do
+      fraction = UnicodeFraction('7/8')
+      assert_equal '⅞', fraction.to_s
+    end
+
+    test '1/9' do
+      fraction = UnicodeFraction('1/9')
+      assert_equal '⅑', fraction.to_s
+    end
+
+    test '1/10' do
+      fraction = UnicodeFraction('1/10')
+      assert_equal '⅒', fraction.to_s
+    end
+
+    test '-1' do
+      fraction = UnicodeFraction('-1')
+      assert_nil fraction
+    end
+  end
+
+  class UnicodeFractionCreationFromUnicodeFractionStringTest < ActiveSupport::TestCase
     test '½' do
       fraction = UnicodeFraction('½')
       assert_equal '½', fraction.to_s
@@ -193,11 +290,6 @@ class UnicodeFractionTest < ActiveSupport::TestCase
     test '√⅒' do
       fraction = UnicodeFraction('√⅒')
       assert_equal '√⅒', fraction.to_s
-    end
-
-    test '-1' do
-      fraction = UnicodeFraction('-1')
-      assert_nil fraction
     end
   end
   # rubocop:enable Metrics/ClassLength
