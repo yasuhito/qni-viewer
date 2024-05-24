@@ -27,6 +27,21 @@ class UnicodeFraction < Numeric
 
   attr_writer :string
 
+  def self.from_string(string)
+    fraction_string = '0' if string == '0'
+    UnicodeFraction::ALL.each do |each|
+      fraction_string = each.fetch(:unicode) if each.fetch(:unicode) == string
+      fraction_string = each.fetch(:unicode) if each[:expanded] == string
+      fraction_string = "√#{each.fetch(:unicode)}" if "√#{each.fetch(:unicode)}" == string
+    end
+
+    return unless fraction_string
+
+    fraction = new
+    fraction.string = fraction_string
+    fraction
+  end
+
   def self.from_number(number, epsilon = 0.0005)
     fraction = new
 
@@ -52,32 +67,6 @@ class UnicodeFraction < Numeric
     end
 
     nil
-  end
-
-  def self.from_string(string)
-    fraction_string = '0' if string == '0'
-    UnicodeFraction::ALL.each do |each|
-      fraction_string = each.fetch(:unicode) if each.fetch(:unicode) == string
-      fraction_string = each.fetch(:unicode) if each[:expanded] == string
-      fraction_string = "√#{each.fetch(:unicode)}" if "√#{each.fetch(:unicode)}" == string
-    end
-
-    return unless fraction_string
-
-    fraction = new
-    fraction.string = fraction_string
-    fraction
-  end
-
-  def self.find_with_close_value(value, epsilon = 0.0005)
-    unicode_fraction = UnicodeFraction.find_unicode_fraction do |each|
-      (each.fetch(:value) - value).abs <= epsilon
-    end
-    return unless unicode_fraction
-
-    fraction = new
-    fraction.string = unicode_fraction[:unicode]
-    fraction
   end
 
   def self.find(&block)
@@ -128,7 +117,21 @@ class UnicodeFraction < Numeric
 end
 
 # rubocop:disable Naming/MethodName
-def UnicodeFraction(string)
-  UnicodeFraction.from_string(string)
+def UnicodeFraction(value, epsilon = nil)
+  case value
+  when String
+    # epsilon が指定されていたらエラー
+    raise ArgumentError, 'invalid argument: epsilon' if epsilon
+
+    UnicodeFraction.from_string(value)
+  when Numeric
+    if epsilon
+      UnicodeFraction.from_number(value, epsilon)
+    else
+      UnicodeFraction.from_number(value)
+    end
+  else
+    raise ArgumentError, "invalid argument: #{value}"
+  end
 end
 # rubocop:enable Naming/MethodName

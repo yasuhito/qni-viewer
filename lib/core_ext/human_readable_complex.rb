@@ -22,7 +22,7 @@ module CoreExt
       return '0' if number.abs < epsilon
       return "-#{abbreviate_float(-number, epsilon)}" if number.negative?
 
-      fraction = UnicodeFraction.find_with_close_value(number, epsilon)
+      fraction = UnicodeFraction(number, epsilon)
       return fraction.to_s if fraction
 
       root_fraction = UnicodeFraction.find do |each|
