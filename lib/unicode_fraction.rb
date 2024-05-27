@@ -91,6 +91,10 @@ class UnicodeFraction < Numeric
     @value - other
   end
 
+  def /(other)
+    @value / other
+  end
+
   def to_s
     @string
   end
