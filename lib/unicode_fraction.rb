@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 # '½', '⅔' などの Unicode で書ける分数を表すクラス。
-# Matrix とそのまま掛け算などを計算できるようにするために、
-# Numeric クラスを継承する。
+# Matrix とそのまま掛け算などを計算できるようにするために、Numeric クラスを継承する。
 class UnicodeFraction < Numeric
   ALL = [
     { unicode: '½', expanded: '1/2', value: 1.0 / 2 },
@@ -48,46 +47,22 @@ class UnicodeFraction < Numeric
 
     return unless fraction_string
 
-    fraction = new
-    fraction.string = fraction_string
-    fraction.value = fraction_value
-    fraction
+    create(fraction_string, fraction_value)
   end
 
   def self.from_number(number, epsilon = 0.0005)
-    fraction = new
-
-    if number.abs < epsilon
-      fraction.string = '0'
-      return fraction
-    end
+    return create('0', 0) if number.abs < epsilon
 
     unicode_fraction = find_unicode_fraction do |each|
       (each.fetch(:value) - number).abs <= epsilon
     end
-    if unicode_fraction&.fetch(:unicode)
-      fraction.string = unicode_fraction.fetch(:unicode)
-      return fraction
-    end
+    return create(unicode_fraction.fetch(:unicode), unicode_fraction.fetch(:value)) if unicode_fraction&.fetch(:unicode)
 
     unicode_fraction = find_unicode_fraction do |each|
       (Math.sqrt(each.fetch(:value)) - number).abs <= epsilon
     end
     if unicode_fraction&.fetch(:unicode)
-      fraction.string = "√#{unicode_fraction.fetch(:unicode)}"
-      return fraction
-    end
-
-    nil
-  end
-
-  def self.find(&block)
-    ALL.each do |each|
-      next unless block.yield(each.fetch(:value))
-
-      fraction = new
-      fraction.string = each[:unicode]
-      return fraction
+      return create("√#{unicode_fraction.fetch(:unicode)}", Math.sqrt(unicode_fraction.fetch(:value)))
     end
 
     nil
@@ -101,6 +76,13 @@ class UnicodeFraction < Numeric
     nil
   end
 
+  def self.create(string, value)
+    fraction = new
+    fraction.string = string
+    fraction.value = value
+    fraction
+  end
+
   def +(other)
     @value + other
   end
@@ -110,17 +92,7 @@ class UnicodeFraction < Numeric
   end
 
   def to_f
-    fraction = UnicodeFraction.find_unicode_fraction do |each|
-      each.fetch(:unicode) == @string
-    end
-    return fraction.fetch(:value) if fraction
-
-    fraction = UnicodeFraction.find_unicode_fraction do |each|
-      "√#{each.fetch(:unicode)}" == @string
-    end
-    return Math.sqrt(fraction.fetch(:value)) if fraction
-
-    raise "unknown fraction: #{@string}"
+    @value
   end
 end
 
