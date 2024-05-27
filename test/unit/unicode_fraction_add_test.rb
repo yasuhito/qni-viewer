@@ -21,7 +21,7 @@ class UnicodeFractionAddTest < ActiveSupport::TestCase
     assert_equal 1.5, UnicodeFraction(0.5) + 1
   end
 
-  test '1/√2 + 1' do
-    assert_equal 1 + (1 / Math.sqrt(2)), UnicodeFraction(Math.sqrt(1 / 2.0)) + 1
+  test '√½ + 1' do
+    assert_equal Math.sqrt(1 / 2.0) + 1, UnicodeFraction(Math.sqrt(1 / 2.0)) + 1
   end
 end
