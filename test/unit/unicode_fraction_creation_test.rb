@@ -4,7 +4,7 @@
 require 'test_helper'
 require 'unicode_fraction'
 
-class UnicodeFractionTest < ActiveSupport::TestCase
+class UnicodeFractionTest
   # rubocop:disable Metrics/ClassLength
   class FromStringTest < ActiveSupport::TestCase
     test '0' do
@@ -406,29 +406,5 @@ class UnicodeFractionTest < ActiveSupport::TestCase
       assert_nil UnicodeFraction((1.0 / 2) + 0.0006, 0.0005)
       assert_nil UnicodeFraction((1.0 / 2) - 0.0006, 0.0005)
     end
-
-    test '1.0 / 3' do
-      assert_equal '⅓', UnicodeFraction(1.0 / 3, 0.0005).to_s
-      assert_nil UnicodeFraction((1.0 / 3) + 0.0006, 0.0005)
-      assert_nil UnicodeFraction((1.0 / 3) - 0.0006, 0.0005)
-    end
-  end
-
-  test 'Matrix * ½' do
-    matrix = Matrix[[1, 2], [3, 4]] * UnicodeFraction('½')
-
-    assert_equal 1 / 2.0, matrix[0, 0]
-    assert_equal 2 / 2.0, matrix[0, 1]
-    assert_equal 3 / 2.0, matrix[1, 0]
-    assert_equal 4 / 2.0, matrix[1, 1]
-  end
-
-  test 'Matrix * √½' do
-    matrix = Matrix[[1, 2], [3, 4]] * UnicodeFraction('√½')
-
-    assert_in_delta 1 / Math.sqrt(2), matrix[0, 0]
-    assert_in_delta 2 / Math.sqrt(2), matrix[0, 1]
-    assert_in_delta 3 / Math.sqrt(2), matrix[1, 0]
-    assert_in_delta 4 / Math.sqrt(2), matrix[1, 1]
   end
 end

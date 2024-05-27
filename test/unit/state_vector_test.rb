@@ -2,7 +2,9 @@
 
 require 'test_helper'
 
+# 状態ベクトルクラス (StateVector) のテスト
 class StateVectorTest
+  # 状態ベクトルの初期化テスト (1 量子ビット)
   class InitializationTest < ActiveSupport::TestCase
     test '|0>' do
       state_vector = StateVector.new('0')
@@ -35,6 +37,7 @@ class StateVectorTest
     end
   end
 
+  # 状態ベクトルの初期化テスト (2 量子ビット)
   class InitializationWith2QubitsTest < ActiveSupport::TestCase
     test '|00>' do
       state_vector = StateVector.new('00')
@@ -67,6 +70,7 @@ class StateVectorTest
     end
   end
 
+  # 状態ベクトルの初期化エラーテスト
   class InvalidBitStringErrorTest < ActiveSupport::TestCase
     test '|> should raise an error' do
       assert_raises StateVector::InvalidBitStringError, match: "Invalid bit string: ''" do
