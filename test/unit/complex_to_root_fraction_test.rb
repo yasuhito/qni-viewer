@@ -2,6 +2,7 @@
 
 require 'test_helper'
 
+# 複素数 (Complex) を '√' 付きの Unicode 分数文字列に変換
 class ComplexToRootFractionTest < ActiveSupport::TestCase
   test 'Complex(Math.sqrt(0.5)) → √½' do
     assert_equal '√½', Complex(Math.sqrt(1.0 / 2)).to_h

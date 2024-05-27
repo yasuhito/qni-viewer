@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require_relative '../../lib/complex'
-require_relative '../../lib/vector'
 
 class CircuitsControllerTest
   class GateTest < ActionDispatch::IntegrationTest

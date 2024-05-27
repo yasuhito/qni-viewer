@@ -7,19 +7,31 @@ require 'keisan'
 # 量子回路シミュレータ
 # rubocop:disable Metrics/ClassLength
 class Simulator
+  def self.i
+    Complex::I
+  end
+
   # TODO: 適切なクラスに移動
   H = Matrix[[1, 1],
-             [1, -1]] * Math.sqrt(0.5)
+             [1, -1]] * UnicodeFraction('√½')
   X = Matrix[[0, 1],
              [1, 0]]
-  Y = Matrix[[0, -Complex::I],
-             [Complex::I, 0]]
+  Y = Matrix[[0, -i],
+             [i, 0]]
   Z = Matrix[[1, 0],
              [0, -1]]
-  RNOT = Matrix[[Complex::I + 1, -Complex::I + 1],
-                [-Complex::I + 1, Complex::I + 1]] * 0.5
+  RNOT = Matrix[[i + 1, -i + 1],
+                [-i + 1, i + 1]] * UnicodeFraction('½')
 
   attr_reader :measured_bits
+
+  def i
+    self.class.i
+  end
+
+  def e
+    Math::E
+  end
 
   def initialize(bits)
     @bits = bits
@@ -56,7 +68,7 @@ class Simulator
     calculator = Keisan::Calculator.new
     radian = calculator.evaluate(phi.gsub('π', 'x'), x: Math::PI)
     phase = Matrix[[1, 0],
-                   [0, Math::E**(Complex::I * radian)]]
+                   [0, e**(i * radian)]]
 
     cu([], phase, target_bit)
   end
