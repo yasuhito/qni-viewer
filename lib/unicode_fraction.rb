@@ -25,20 +25,32 @@ class UnicodeFraction < Numeric
     { unicode: '⅒', expanded: '1/10', value: 1.0 / 10 }
   ].freeze
 
-  attr_writer :string
+  attr_writer :string, :value
 
   def self.from_string(string)
     fraction_string = '0' if string == '0'
+    fraction_value = nil
+
     UnicodeFraction::ALL.each do |each|
-      fraction_string = each.fetch(:unicode) if each.fetch(:unicode) == string
-      fraction_string = each.fetch(:unicode) if each[:expanded] == string
-      fraction_string = "√#{each.fetch(:unicode)}" if "√#{each.fetch(:unicode)}" == string
+      if each.fetch(:unicode) == string
+        fraction_string = each.fetch(:unicode)
+        fraction_value = each.fetch(:value)
+      end
+      if each[:expanded] == string
+        fraction_string = each.fetch(:unicode)
+        fraction_value = each.fetch(:value)
+      end
+      if "√#{each.fetch(:unicode)}" == string
+        fraction_string = "√#{each.fetch(:unicode)}"
+        fraction_value = Math.sqrt(each.fetch(:value))
+      end
     end
 
     return unless fraction_string
 
     fraction = new
     fraction.string = fraction_string
+    fraction.value = fraction_value
     fraction
   end
 
@@ -89,13 +101,9 @@ class UnicodeFraction < Numeric
     nil
   end
 
-  # def self.match_unicode_fraction(&block)
-  #   ALL.each do |each|
-  #     return each if block.yield(each)
-  #   end
-
-  #   nil
-  # end
+  def +(other)
+    @value + other
+  end
 
   def to_s
     @string
