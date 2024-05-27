@@ -94,7 +94,7 @@ class UnicodeFraction < Numeric
   def *(other)
     @value * other
   end
-  
+
   def /(other)
     @value / other
   end
