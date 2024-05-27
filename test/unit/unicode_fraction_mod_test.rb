@@ -3,7 +3,7 @@
 require 'test_helper'
 require 'unicode_fraction'
 
-class UnicodeFractionAddTest < ActiveSupport::TestCase
+class UnicodeFractionModTest < ActiveSupport::TestCase
   test '"1/2" % 2' do
     assert_equal 0.5, UnicodeFraction('1/2') % 2
   end
