@@ -6,11 +6,11 @@ module CoreExt
     def to_h(epsilon = 0.0005)
       return abbreviate_float(real) if imag.abs <= epsilon
 
-      if real.abs <= 0.0005
+      if real.abs <= epsilon
         return 'i' if (imag - 1).abs <= epsilon
         return '-i' if (imag + 1).abs <= epsilon
 
-        return "#{abbreviate_float(imag)}i"
+        return "#{abbreviate_float(imag, epsilon)}i"
       end
 
       to_h_both_values(epsilon)
@@ -25,10 +25,8 @@ module CoreExt
       fraction = UnicodeFraction(number, epsilon)
       return fraction.to_s if fraction
 
-      root_fraction = UnicodeFraction.find do |each|
-        (Math.sqrt(each) - number).abs <= epsilon
-      end
-      return "√#{root_fraction}" if root_fraction
+      root_fraction = UnicodeFraction(number, epsilon)
+      return root_fraction.to_h if root_fraction
 
       number.to_s
     end
