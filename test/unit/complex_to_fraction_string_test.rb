@@ -3,7 +3,7 @@
 require 'test_helper'
 
 # 複素数 (Complex) を Unicode 分数文字列に変換
-class ComplexToFractionTest < ActiveSupport::TestCase
+class ComplexToFractionStringTest < ActiveSupport::TestCase
   test '1/2 → ½' do
     assert_equal '½', Complex(1.0 / 2).to_wolfram
   end
