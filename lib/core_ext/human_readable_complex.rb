@@ -3,7 +3,7 @@
 module CoreExt
   # Complex クラスに #to_h を追加
   module HumanReadableComplex
-    def to_h(epsilon = 0.0005)
+    def to_wolfram(epsilon = 0.0005)
       return abbreviate_float(real) if imag.abs <= epsilon
 
       if real.abs <= epsilon
