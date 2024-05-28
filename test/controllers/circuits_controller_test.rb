@@ -24,8 +24,8 @@ class CircuitsControllerTest
       get circuit_path, params: { circuit_json: '{ "cols": [["H"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
-      assert_equal '√½', amplitudes[0].to_h
-      assert_equal '√½', amplitudes[1].to_h
+      assert_equal '√½', amplitudes[0].to_wolfram
+      assert_equal '√½', amplitudes[1].to_wolfram
     end
 
     test <<~TEST do
@@ -38,9 +38,9 @@ class CircuitsControllerTest
       get circuit_path, params: { circuit_json: '{ "cols": [[1, "H"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
-      assert_equal '√½', amplitudes[0].to_h
+      assert_equal '√½', amplitudes[0].to_wolfram
       assert_equal 0, amplitudes[1]
-      assert_equal '√½', amplitudes[2].to_h
+      assert_equal '√½', amplitudes[2].to_wolfram
       assert_equal 0, amplitudes[3]
     end
 
@@ -54,10 +54,10 @@ class CircuitsControllerTest
       get circuit_path, params: { circuit_json: '{ "cols": [["H", "H"]] }' }, as: :json
 
       assert_equal 4, amplitudes.length
-      assert_equal '½', amplitudes[0].to_h
-      assert_equal '½', amplitudes[1].to_h
-      assert_equal '½', amplitudes[2].to_h
-      assert_equal '½', amplitudes[3].to_h
+      assert_equal '½', amplitudes[0].to_wolfram
+      assert_equal '½', amplitudes[1].to_wolfram
+      assert_equal '½', amplitudes[2].to_wolfram
+      assert_equal '½', amplitudes[3].to_wolfram
     end
   end
 
@@ -117,7 +117,7 @@ class CircuitsControllerTest
 
       assert_equal 2, amplitudes.length
       assert_equal 0, amplitudes[0]
-      assert_equal 'i', amplitudes[1].to_h
+      assert_equal 'i', amplitudes[1].to_wolfram
     end
 
     test <<~TEST do
@@ -132,7 +132,7 @@ class CircuitsControllerTest
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
       assert_equal 0, amplitudes[1]
-      assert_equal 'i', amplitudes[2].to_h
+      assert_equal 'i', amplitudes[2].to_wolfram
       assert_equal 0, amplitudes[3]
     end
 
@@ -232,8 +232,8 @@ class CircuitsControllerTest
       get circuit_path, params: { circuit_json: '{ "cols": [["H"], ["P(π/2)"]] }' }, as: :json
 
       assert_equal 2, amplitudes.length
-      assert_equal '√½', amplitudes[0].to_h
-      assert_equal '√½i', amplitudes[1].to_h
+      assert_equal '√½', amplitudes[0].to_wolfram
+      assert_equal '√½i', amplitudes[1].to_wolfram
     end
   end
 

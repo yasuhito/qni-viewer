@@ -28,7 +28,7 @@ class StateVector
   end
 
   def to_wolfram
-    items = @vector.flat_map { |each| "{#{Complex(each).to_h}}" }
+    items = @vector.flat_map { |each| "{#{Complex(each).to_wolfram}}" }
     "{#{items.join(', ')}}"
   end
 
