@@ -103,7 +103,7 @@ class UnicodeFraction < Numeric
     @value <=> other
   end
 
-  def to_s
+  def to_wolfram
     @string
   end
 
@@ -112,22 +112,26 @@ class UnicodeFraction < Numeric
   end
 end
 
-# rubocop:disable Naming/MethodName
-def UnicodeFraction(value, epsilon = nil)
-  case value
-  when String
-    # epsilon が指定されていたらエラー
-    raise ArgumentError, 'invalid argument: epsilon' if epsilon
+# rubocop:disable Style/Documentation
+module Kernel
+  # rubocop:disable Naming/MethodName
+  def UnicodeFraction(value, epsilon = nil)
+    case value
+    when String
+      # epsilon が指定されていたらエラー
+      raise ArgumentError, 'invalid argument: epsilon' if epsilon
 
-    UnicodeFraction.from_string(value)
-  when Numeric
-    if epsilon
-      UnicodeFraction.from_number(value, epsilon)
+      UnicodeFraction.from_string(value)
+    when Numeric
+      if epsilon
+        UnicodeFraction.from_number(value, epsilon)
+      else
+        UnicodeFraction.from_number(value)
+      end
     else
-      UnicodeFraction.from_number(value)
+      raise ArgumentError, "invalid argument: #{value}"
     end
-  else
-    raise ArgumentError, "invalid argument: #{value}"
   end
+  # rubocop:enable Naming/MethodName
 end
-# rubocop:enable Naming/MethodName
+# rubocop:enable Style/Documentation

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'unicode_fraction'
+
 module CoreExt
   # Complex クラスに #to_wolfram を追加
   module ComplexToWolfram
@@ -23,10 +25,7 @@ module CoreExt
       return "-#{abbreviate_float(-number, epsilon)}" if number.negative?
 
       fraction = UnicodeFraction(number, epsilon)
-      return fraction.to_s if fraction
-
-      root_fraction = UnicodeFraction(number, epsilon)
-      return root_fraction.to_h if root_fraction
+      return fraction.to_wolfram if fraction
 
       number.to_s
     end
