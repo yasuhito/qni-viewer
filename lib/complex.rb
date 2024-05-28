@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'core_ext/human_readable_complex'
+require 'core_ext/complex_to_wolfram'
 
 class Complex
-  include CoreExt::HumanReadableComplex
+  include CoreExt::ComplexToWolfram
 end

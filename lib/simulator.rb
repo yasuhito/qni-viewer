@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require 'state_vector'
-require 'matrix'
 require 'keisan'
+require 'matrix'
+require 'state_vector'
+require 'unicode_fraction'
 
 # 量子回路シミュレータ
 # rubocop:disable Metrics/ClassLength
