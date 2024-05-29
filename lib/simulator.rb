@@ -119,8 +119,13 @@ class Simulator
 
   def state
     # @state_vector の各要素を複素数に変換した配列を返す
-    @state_vector.map do |each|
-      c = Complex(each)
+    # @state_vector.map do |each|
+    #   c = Complex(each)
+    #   { magnitude: (c.real**2) + (c.imag**2), phaseDeg: (Math.atan2(c.imag, c.real) / Math::PI) * 180, real: c.real,
+    #     imag: c.imag }
+    # end
+    @state_vector.map do |real, imag|
+      c = Complex(real, imag)
       { magnitude: (c.real**2) + (c.imag**2), phaseDeg: (Math.atan2(c.imag, c.real) / Math::PI) * 180, real: c.real,
         imag: c.imag }
     end
@@ -146,14 +151,15 @@ class Simulator
       if !is_controlled && !qubit_val
         j = i + ((1 << target_bit) * 2)
 
-        xr = @state_vector[i / 2].real
-        xi = @state_vector[i / 2].imag
-        yr = @state_vector[j / 2].real
-        yi = @state_vector[j / 2].imag
+        Rails.logger.debug @state_vector
+        xr = @state_vector[i].real
+        xi = @state_vector[i].imag
+        yr = @state_vector[j].real
+        yi = @state_vector[j].imag
 
-        @state_vector[i / 2] = Complex((xr * ar) - (xi * ai) + (yr * br) - (yi * bi),
-                                       (xr * ai) + (xi * ar) + (yr * bi) + (yi * br))
-        @state_vector[j / 2] =
+        @state_vector[i] = Complex((xr * ar) - (xi * ai) + (yr * br) - (yi * bi),
+                                   (xr * ai) + (xi * ar) + (yr * bi) + (yi * br))
+        @state_vector[j] =
           Complex((xr * cr) - (xi * ci) + (yr * dr) - (yi * di), (xr * ci) + (xi * cr) + (yr * di) + (yi * dr))
       end
 
@@ -175,7 +181,7 @@ class Simulator
     probability = 0
 
     (0...(1 << @state_vector.qubit_count)).each do |each|
-      probability += @state_vector[each].abs**2 if (each & (1 << target_bit)).zero?
+      probability += @state_vector.amplifier(each).abs**2 if (each & (1 << target_bit)).zero?
     end
 
     probability

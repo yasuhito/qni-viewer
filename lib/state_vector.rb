@@ -36,6 +36,8 @@ class StateVector
       new(width, height, buf)
     end
 
+    attr_reader :width, :height, :buffer
+
     def initialize(width, height, buffer)
       @width = width
       @height = height
@@ -86,6 +88,77 @@ class StateVector
       end
     end
 
+    def tensor_product(other)
+      w1 = @width
+      h1 = @height
+      w2 = other.width
+      h2 = other.height
+      w = w1 * w2
+      h = h1 * h2
+      new_buffer = []
+
+      (0...h1).each do |r1|
+        (0...h2).each do |r2|
+          (0...w1).each do |c1|
+            (0...w2).each do |c2|
+              k1 = ((r1 * w1) + c1) * 2
+              k2 = ((r2 * w2) + c2) * 2
+              k3 = ((((r1 * h2) + r2) * w) + ((c1 * w2) + c2)) * 2
+              cr1 = @buffer[k1]
+              ci1 = @buffer[k1 + 1]
+              cr2 = other.buffer[k2]
+              ci2 = other.buffer[k2 + 1]
+              cr3 = (cr1 * cr2) - (ci1 * ci2)
+              ci3 = (cr1 * ci2) + (ci1 * cr2)
+
+              # k1 = (r1 * w1 + c1) * 2
+              # k2 = ((r2 * w2) + c2) * 2
+              # k3 = ((((r1 * h2) + r2) * w) + ((c1 * w2) + c2)) * 2
+              # cr1 = @buffer[k1]
+              # ci1 = @buffer[k1 + 1]
+              # cr2 = other.buffer[k2]
+              # ci2 = other.buffer[k2 + 1]
+              # cr3 = (cr1 * cr2) - (ci1 * ci2)
+              # ci3 = (cr1 * ci2) + (ci1 * cr2)
+              new_buffer[k3] = cr3
+              new_buffer[k3 + 1] = ci3
+            end
+          end
+        end
+      end
+
+      Matrix.new(w, h, new_buffer)
+      # tensorProduct(other: Matrix): Matrix {
+      #   const w1 = this.width
+      #   const h1 = this.height
+      #   const w2 = other.width
+      #   const h2 = other.height
+      #   const w = w1 * w2
+      #   const h = h1 * h2
+      #   const newBuffer = new Float64Array(w * h * 2)
+      #   for (let r1 = 0; r1 < h1; r1++) {
+      #     for (let r2 = 0; r2 < h2; r2++) {
+      #       for (let c1 = 0; c1 < w1; c1++) {
+      #         for (let c2 = 0; c2 < w2; c2++) {
+      #           const k1 = (r1 * w1 + c1) * 2
+      #           const k2 = (r2 * w2 + c2) * 2
+      #           const k3 = ((r1 * h2 + r2) * w + (c1 * w2 + c2)) * 2
+      #           const cr1 = this.buffer[k1]
+      #           const ci1 = this.buffer[k1 + 1]
+      #           const cr2 = other.buffer[k2]
+      #           const ci2 = other.buffer[k2 + 1]
+      #           const cr3 = cr1 * cr2 - ci1 * ci2
+      #           const ci3 = cr1 * ci2 + ci1 * cr2
+      #           newBuffer[k3] = cr3
+      #           newBuffer[k3 + 1] = ci3
+      #         }
+      #       }
+      #     }
+      #   }
+      #   return new Matrix(w, h, newBuffer)
+      # }
+    end
+
     def to_wolfram
       data = rows.map do |row|
         row.map(&:to_wolfram).join(', ')
@@ -98,10 +171,10 @@ class StateVector
   include Math
   extend Forwardable
 
-  def_delegator :@vector, :size
-  def_delegator :@vector, :[]
-  def_delegator :@vector, :[]=
-  def_delegator :@vector, :map
+  # def_delegator :@vector, :size
+  # def_delegator :@vector, :[]
+  # def_delegator :@vector, :[]=
+  # def_delegator :@vector, :map
 
   # カスタム例外: 状態ベクトル初期化に使うビット文字列が不正
   class InvalidBitStringError < StandardError
@@ -112,6 +185,32 @@ class StateVector
 
   def initialize(bits)
     @matrix = bit_string_to_matrix(bits)
+  end
+
+  def size
+    @matrix.buffer.length / 2
+  end
+
+  # TODO: Complex を返すように修正
+  def [](index)
+    @matrix.buffer[index]
+  end
+
+  def []=(index, value)
+    @matrix.buffer[index] = value
+  end
+
+  def amplifier(bit)
+    Complex(@matrix.buffer[bit * 2], @matrix.buffer[(bit * 2) + 1])
+  end
+
+  def map(&block)
+    result = []
+    @matrix.each_cell do |real, imag, index|
+      result_index = index * 0.5
+      result[result_index] = block.call(real, imag)
+    end
+    result
   end
 
   def qubit_count
