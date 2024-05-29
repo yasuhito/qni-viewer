@@ -397,7 +397,6 @@ class CircuitsControllerTest
     TEST
       get circuit_path, params: { circuit_json: '{ "cols": [["|1>", "|1>"]] }' }, as: :json
 
-      p amplitudes
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
       assert_equal 0, amplitudes[1]

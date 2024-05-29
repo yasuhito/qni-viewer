@@ -73,8 +73,16 @@ class StateVector
       end
     end
 
+    def set(col, row, value)
+      i = (@width * row + col) * 2
+      @buffer[i] = value.real
+      @buffer[i + 1] = value.imag
+    end
+
     # TODO: メソッド名を標準の Matrix クラスと合わせる
     def cell(col, row)
+      raise "Cell out of range" if row >= @height
+
       i = ((@width * row) + col) * 2
       Complex(@buffer[i], @buffer[i + 1])
     end
@@ -128,35 +136,6 @@ class StateVector
       end
 
       Matrix.new(w, h, new_buffer)
-      # tensorProduct(other: Matrix): Matrix {
-      #   const w1 = this.width
-      #   const h1 = this.height
-      #   const w2 = other.width
-      #   const h2 = other.height
-      #   const w = w1 * w2
-      #   const h = h1 * h2
-      #   const newBuffer = new Float64Array(w * h * 2)
-      #   for (let r1 = 0; r1 < h1; r1++) {
-      #     for (let r2 = 0; r2 < h2; r2++) {
-      #       for (let c1 = 0; c1 < w1; c1++) {
-      #         for (let c2 = 0; c2 < w2; c2++) {
-      #           const k1 = (r1 * w1 + c1) * 2
-      #           const k2 = (r2 * w2 + c2) * 2
-      #           const k3 = ((r1 * h2 + r2) * w + (c1 * w2 + c2)) * 2
-      #           const cr1 = this.buffer[k1]
-      #           const ci1 = this.buffer[k1 + 1]
-      #           const cr2 = other.buffer[k2]
-      #           const ci2 = other.buffer[k2 + 1]
-      #           const cr3 = cr1 * cr2 - ci1 * ci2
-      #           const ci3 = cr1 * ci2 + ci1 * cr2
-      #           newBuffer[k3] = cr3
-      #           newBuffer[k3 + 1] = ci3
-      #         }
-      #       }
-      #     }
-      #   }
-      #   return new Matrix(w, h, newBuffer)
-      # }
     end
 
     def to_wolfram
@@ -170,6 +149,8 @@ class StateVector
 
   include Math
   extend Forwardable
+
+  attr_reader :matrix
 
   # def_delegator :@vector, :size
   # def_delegator :@vector, :[]
@@ -187,9 +168,9 @@ class StateVector
     @matrix = bit_string_to_matrix(bits)
   end
 
-  def size
-    @matrix.buffer.length / 2
-  end
+  # def size
+  #   @matrix.buffer.length / 2
+  # end
 
   # TODO: Complex を返すように修正
   def [](index)
@@ -200,8 +181,16 @@ class StateVector
     @matrix.buffer[index] = value
   end
 
-  def amplifier(bit)
-    Complex(@matrix.buffer[bit * 2], @matrix.buffer[(bit * 2) + 1])
+  def amplifier(index)
+    # p "amplifier(#{index})"
+    # p "@matrix.buffer.length = #{@matrix.buffer.length}"
+    # p "@matrix.buffer = #{@matrix.buffer.inspect}"
+    @matrix.cell(0, index)
+    # Complex(@matrix.buffer[index * 2], @matrix.buffer[(index * 2) + 1])
+  end
+
+  def set_amplifier(index, value)
+    matrix.set(0, index, value)
   end
 
   def map(&block)
@@ -214,7 +203,7 @@ class StateVector
   end
 
   def qubit_count
-    Math.log2(size).to_i
+    Math.log2(@matrix.buffer.length / 2).to_i
   end
 
   def to_wolfram

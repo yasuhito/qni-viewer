@@ -102,14 +102,14 @@ class Simulator
 
     if rand <= p_zero
       (0...(1 << @state_vector.qubit_count)).each do |each|
-        @state_vector[each] = Complex(0, 0) if (each & (1 << target_bit)) != 0
-        @state_vector[each] = @state_vector[each] / Math.sqrt(p_zero)
+        @state_vector.set_amplifier(each, Complex(0, 0)) if (each & (1 << target_bit)) != 0
+        @state_vector.set_amplifier(each, @state_vector.amplifier(each) / Math.sqrt(p_zero))
       end
       @measured_bits[target_bit] = 0
     else
       (0...(1 << @state_vector.qubit_count)).each do |each|
-        @state_vector[each] = Complex(0, 0) if (each & (1 << target_bit)).zero?
-        @state_vector[each] = @state_vector[each] / Math.sqrt(1 - p_zero)
+        @state_vector.set_amplifier(each, Complex(0, 0)) if (each & (1 << target_bit)).zero?
+        @state_vector.set_amplifier(each, @state_vector.amplifier(each) / Math.sqrt(1 - p_zero))
       end
       @measured_bits[target_bit] = 1
     end
@@ -131,6 +131,10 @@ class Simulator
     end
   end
 
+  def qubit_count
+    @state_vector.qubit_count
+  end
+
   private
 
   def times_qubit_operation(gate, target_bit, control_mask = 0, desigred_value_mask = 0)
@@ -144,23 +148,22 @@ class Simulator
     di = gate[1, 1].imag
 
     i = 0
-    (0...@state_vector.size).each do |row|
+    (0...(@state_vector.matrix.buffer.length / 2)).each do |row|
       is_controlled = ((control_mask & row) ^ desigred_value_mask) != 0
       qubit_val = (row & (1 << target_bit)) != 0
 
       if !is_controlled && !qubit_val
         j = i + ((1 << target_bit) * 2)
 
-        Rails.logger.debug @state_vector
-        xr = @state_vector[i].real
-        xi = @state_vector[i].imag
-        yr = @state_vector[j].real
-        yi = @state_vector[j].imag
+        xr = @state_vector[i]
+        xi = @state_vector[i + 1]
+        yr = @state_vector[j]
+        yi = @state_vector[j + 1]
 
-        @state_vector[i] = Complex((xr * ar) - (xi * ai) + (yr * br) - (yi * bi),
-                                   (xr * ai) + (xi * ar) + (yr * bi) + (yi * br))
-        @state_vector[j] =
-          Complex((xr * cr) - (xi * ci) + (yr * dr) - (yi * di), (xr * ci) + (xi * cr) + (yr * di) + (yi * dr))
+        @state_vector[i] = (xr * ar) - (xi * ai) + (yr * br) - (yi * bi)
+        @state_vector[i + 1] = (xr * ai) + (xi * ar) + (yr * bi) + (yi * br)
+        @state_vector[j] = (xr * cr) - (xi * ci) + (yr * dr) - (yi * di)
+        @state_vector[j + 1] = (xr * ci) + (xi * cr) + (yr * di) + (yi * dr)
       end
 
       i += 2
