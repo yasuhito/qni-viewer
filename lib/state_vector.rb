@@ -165,6 +165,21 @@ class StateVector
           kets << Matrix.col(Math.sqrt(0.5), Complex(0, Math.sqrt(0.5)))
           # kets << Vector[sqrt(0.5), Complex(0, sqrt(0.5))]
         end
+      when '('
+        raise InvalidBitStringError, bit_string if in_paren
+
+        in_paren = true
+        in_paren_token = ''
+      when ')'
+        raise InvalidBitStringError, bit_string unless in_paren_token == '-i'
+
+        # |-i>
+        kets << Matrix.col(Math.sqrt(0.5), Complex(0, -Math.sqrt(0.5)))
+        # kets << Vector[sqrt(0.5), Complex(0, -sqrt(0.5))]
+        in_paren = false
+        in_paren_token = ''
+      else
+        raise InvalidBitStringError, bits
       end
     end
 
