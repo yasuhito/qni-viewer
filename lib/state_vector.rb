@@ -4,6 +4,97 @@ require 'matrix'
 
 # 状態ベクトルとその各種操作
 class StateVector
+  # 状態ベクトルを保持する行列
+  class Matrix
+    def self.col(*coefs)
+      generate(1, coefs.length) do |r|
+        coefs[r]
+      end
+    end
+
+    # TODO: build に名前変更
+    def self.generate(width, height, &block)
+      buf = []
+
+      0.upto(height - 1) do |r|
+        0.upto(width - 1) do |c|
+          k = ((r * width) + c) * 2 # real part index
+          v = block.call(r, c)
+
+          if v.is_a?(Complex)
+            buf[k] = v.real
+            buf[k + 1] = v.imag
+          elsif v.is_a?(Numeric)
+            buf[k] = v
+            buf[k + 1] = 0
+          else
+            raise 'わかんないのが来た'
+          end
+        end
+      end
+
+      new(width, height, buf)
+    end
+
+    def initialize(width, height, buffer)
+      @width = width
+      @height = height
+      @buffer = buffer
+    end
+
+    def rows
+      (0...@height).map do |row|
+        (0...@width).map do |col|
+          cell(col, row)
+        end
+      end
+    end
+
+    def *(other)
+      case other
+      when Numeric
+        new_buffer = []
+
+        other_r = Complex(other).real
+        other_i = Complex(other).imag
+
+        each_cell do |real, imag, index|
+          new_real = (real * other_r) - (imag * other_i)
+          new_imag = (real * other_i) + (imag * other_r)
+          new_buffer[index] = new_real
+          new_buffer[index + 1] = new_imag
+        end
+
+        Matrix.new(@width, @height, new_buffer)
+      else
+        raise 'Not yet supported'
+      end
+    end
+
+    # TODO: メソッド名を標準の Matrix クラスと合わせる
+    def cell(col, row)
+      i = ((@width * row) + col) * 2
+      Complex(@buffer[i], @buffer[i + 1])
+    end
+
+    # TODO: 上のメソッドに合わせて (または標準の Matrix クラスに合わせて) メソッド名を変更
+    def each_cell(&block)
+      (0...@buffer.length).step(2) do |i|
+        real = @buffer[i]
+        imag = @buffer[i + 1]
+        block.call real, imag, i
+      end
+    end
+
+    def to_wolfram
+      data = rows.map do |row|
+        row.map(&:to_wolfram).join(', ')
+      end.join('}, {')
+
+      "{{#{data}}}"
+    end
+  end
+
   include Math
   extend Forwardable
 
@@ -20,7 +111,7 @@ class StateVector
   end
 
   def initialize(bits)
-    @vector = parse_bit_string(bits)
+    @matrix = bit_string_to_matrix(bits)
   end
 
   def qubit_count
@@ -28,11 +119,39 @@ class StateVector
   end
 
   def to_wolfram
-    items = @vector.flat_map { |each| "{#{Complex(each).to_wolfram}}" }
-    "{#{items.join(', ')}}"
+    @matrix.to_wolfram
+    # items = @vector.flat_map { |each| "{#{Complex(each).to_wolfram}}" }
+    # "{#{items.join(', ')}}"
   end
 
   private
+
+  def bit_string_to_matrix(bit_string)
+    kets = []
+    in_paren = false
+
+    bit_string.chars.each do |each|
+      case each
+      when '0' # |0>
+        raise InvalidBitStringError, bit_string if in_paren
+
+        kets << Matrix.col(1, 0)
+      when '1' # |1>
+        raise InvalidBitStringError, bit_string if in_paren
+
+        kets << Matrix.col(0, 1)
+      when '+' # |+>
+        raise InvalidBitStringError, bit_string if in_paren
+
+        # FIXME: Math.sqrt(0.5) を UnicodeFraction('√½') にする
+        kets << (Matrix.col(1, 1) * Math.sqrt(0.5))
+      end
+    end
+
+    raise InvalidBitStringError, bit_string if kets.empty?
+
+    kets.inject(&:tensor_product)
+  end
 
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
