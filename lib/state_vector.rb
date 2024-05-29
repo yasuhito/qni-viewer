@@ -129,6 +129,7 @@ class StateVector
   def bit_string_to_matrix(bit_string)
     kets = []
     in_paren = false
+    in_paren_token = nil
 
     bit_string.chars.each do |each|
       case each
@@ -145,6 +146,16 @@ class StateVector
 
         # FIXME: Math.sqrt(0.5) を UnicodeFraction('√½') にする
         kets << (Matrix.col(1, 1) * Math.sqrt(0.5))
+      when '-' # |->
+        if in_paren
+          raise InvalidBitStringError, bit_string unless in_paren_token == ''
+
+          in_paren_token = '-'
+        else # |->
+          kets << (Matrix.col(1, -1) * Math.sqrt(0.5))
+          # TODO: Matrix#[] を定義して、配列から作れるようにしたほうが @buffer を隠蔽できていいかも
+          # kets << Vector[sqrt(0.5), -sqrt(0.5)]
+        end
       end
     end
 
