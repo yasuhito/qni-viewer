@@ -154,16 +154,17 @@ class Simulator
 
       if !is_controlled && !qubit_val
         j = i + ((1 << target_bit) * 2)
+        state_vector_raw_buffer = @state_vector.raw_buffer
 
-        xr = @state_vector[i]
-        xi = @state_vector[i + 1]
-        yr = @state_vector[j]
-        yi = @state_vector[j + 1]
+        xr = state_vector_raw_buffer[i]
+        xi = state_vector_raw_buffer[i + 1]
+        yr = state_vector_raw_buffer[j]
+        yi = state_vector_raw_buffer[j + 1]
 
-        @state_vector[i] = (xr * ar) - (xi * ai) + (yr * br) - (yi * bi)
-        @state_vector[i + 1] = (xr * ai) + (xi * ar) + (yr * bi) + (yi * br)
-        @state_vector[j] = (xr * cr) - (xi * ci) + (yr * dr) - (yi * di)
-        @state_vector[j + 1] = (xr * ci) + (xi * cr) + (yr * di) + (yi * dr)
+        state_vector_raw_buffer[i] = (xr * ar) - (xi * ai) + (yr * br) - (yi * bi)
+        state_vector_raw_buffer[i + 1] = (xr * ai) + (xi * ar) + (yr * bi) + (yi * br)
+        state_vector_raw_buffer[j] = (xr * cr) - (xi * ci) + (yr * dr) - (yi * di)
+        state_vector_raw_buffer[j + 1] = (xr * ci) + (xi * cr) + (yr * di) + (yi * dr)
       end
 
       i += 2

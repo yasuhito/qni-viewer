@@ -74,14 +74,14 @@ class StateVector
     end
 
     def set(col, row, value)
-      i = (@width * row + col) * 2
+      i = ((@width * row) + col) * 2
       @buffer[i] = value.real
       @buffer[i + 1] = value.imag
     end
 
     # TODO: メソッド名を標準の Matrix クラスと合わせる
     def cell(col, row)
-      raise "Cell out of range" if row >= @height
+      raise 'Cell out of range' if row >= @height
 
       i = ((@width * row) + col) * 2
       Complex(@buffer[i], @buffer[i + 1])
@@ -172,21 +172,8 @@ class StateVector
   #   @matrix.buffer.length / 2
   # end
 
-  # TODO: Complex を返すように修正
-  def [](index)
-    @matrix.buffer[index]
-  end
-
-  def []=(index, value)
-    @matrix.buffer[index] = value
-  end
-
   def amplifier(index)
-    # p "amplifier(#{index})"
-    # p "@matrix.buffer.length = #{@matrix.buffer.length}"
-    # p "@matrix.buffer = #{@matrix.buffer.inspect}"
     @matrix.cell(0, index)
-    # Complex(@matrix.buffer[index * 2], @matrix.buffer[(index * 2) + 1])
   end
 
   def set_amplifier(index, value)
@@ -204,6 +191,10 @@ class StateVector
 
   def qubit_count
     Math.log2(@matrix.buffer.length / 2).to_i
+  end
+
+  def raw_buffer
+    @matrix.buffer
   end
 
   def to_wolfram
