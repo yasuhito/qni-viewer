@@ -156,6 +156,15 @@ class StateVector
           # TODO: Matrix#[] を定義して、配列から作れるようにしたほうが @buffer を隠蔽できていいかも
           # kets << Vector[sqrt(0.5), -sqrt(0.5)]
         end
+      when 'i'
+        if in_paren
+          raise InvalidBitStringError, bit_string unless in_paren_token == '-'
+
+          in_paren_token = '-i'
+        else # |i>
+          kets << Matrix.col(Math.sqrt(0.5), Complex(0, Math.sqrt(0.5)))
+          # kets << Vector[sqrt(0.5), Complex(0, sqrt(0.5))]
+        end
       end
     end
 
