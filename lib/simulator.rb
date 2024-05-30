@@ -41,27 +41,27 @@ class Simulator
   end
 
   def h(target_bit)
-    @state_vector.times_qubit_operation(H, target_bit)
+    @state_vector.apply_controlled_gate(H, target_bit)
     self
   end
 
   def x(target_bit)
-    @state_vector.times_qubit_operation(X, target_bit)
+    @state_vector.apply_controlled_gate(X, target_bit)
     self
   end
 
   def y(target_bit)
-    @state_vector.times_qubit_operation(Y, target_bit)
+    @state_vector.apply_controlled_gate(Y, target_bit)
     self
   end
 
   def z(target_bit)
-    @state_vector.times_qubit_operation(Z, target_bit)
+    @state_vector.apply_controlled_gate(Z, target_bit)
     self
   end
 
   def rnot(target_bit)
-    @state_vector.times_qubit_operation(RNOT, target_bit)
+    @state_vector.apply_controlled_gate(RNOT, target_bit)
     self
   end
 
@@ -76,11 +76,11 @@ class Simulator
 
   def cnot(target_bit, controls, anti_controls)
     anti_controls.each do |each|
-      @state_vector.times_qubit_operation(X, each)
+      @state_vector.apply_controlled_gate(X, each)
     end
     cu controls + anti_controls, X, target_bit
     anti_controls.each do |each|
-      @state_vector.times_qubit_operation(X, each)
+      @state_vector.apply_controlled_gate(X, each)
     end
 
     self
@@ -132,11 +132,7 @@ class Simulator
   private
 
   def cu(controls, gate, target_bit)
-    control_mask = controls.reduce(0) do |result, each|
-      result | (1 << each)
-    end
-
-    @state_vector.times_qubit_operation(gate, target_bit, control_mask)
+    @state_vector.apply_controlled_gate(gate, target_bit, controls)
   end
 
   def probability_zero(target_bit)
