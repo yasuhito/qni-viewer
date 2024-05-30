@@ -131,13 +131,7 @@ class StateVector
       Matrix.new(w, h, new_buffer)
     end
 
-    # Performs a qubit operation on the state vector.
-    #
-    # - gate The gate representing the qubit operation.
-    # - target_bit The index of the target qubit.
-    # - control_mask The control mask for controlled operations (default is 0).
-    # - desired_value_mask The desired value mask for controlled operations (default is 0).
-    def times_qubit_operation(gate, target_bit, control_mask = 0, desired_value_mask = 0)
+    def apply_controlled_gate(gate, target_bit, control_mask = 0, desired_value_mask = 0)
       ar = gate[0, 0].real
       ai = gate[0, 0].imag
       br = gate[0, 1].real
@@ -148,18 +142,20 @@ class StateVector
       di = gate[1, 1].imag
 
       state_vector_length = @buffer.length / 2
+      target_bit_shift = 1 << target_bit
+      qubit_pair_offset = target_bit_shift * 2
 
       (0...state_vector_length).each do |row|
         is_controlled = ((control_mask & row) ^ desired_value_mask) != 0
-        qubit_val = (row & (1 << target_bit)) != 0
+        qubit_val = (row & target_bit_shift) != 0
 
-        next unless !is_controlled && !qubit_val
+        next if is_controlled || qubit_val
 
         i = row * 2
-        j = i + ((1 << target_bit) * 2)
+        j = i + qubit_pair_offset
 
-        xr = @buffer[i]
         xi = @buffer[i + 1]
+        xr = @buffer[i]
         yr = @buffer[j]
         yi = @buffer[j + 1]
 
@@ -229,8 +225,12 @@ class StateVector
     @matrix.to_wolfram
   end
 
-  def times_qubit_operation(gate, target_bit, control_mask = 0)
-    @matrix.times_qubit_operation(gate, target_bit, control_mask, control_mask)
+  def apply_controlled_gate(gate, target_bit, controls = [])
+    control_mask = controls.reduce(0) do |result, each|
+      result | (1 << each)
+    end
+
+    @matrix.apply_controlled_gate(gate, target_bit, control_mask, control_mask)
   end
 
   private
