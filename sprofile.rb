@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby -Ilib
+# frozen_string_literal: true
 
 require 'simulator'
 require 'stackprof'

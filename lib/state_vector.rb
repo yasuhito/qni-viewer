@@ -4,6 +4,7 @@ require 'forwardable'
 require 'matrix'
 
 # 状態ベクトルとその各種操作
+# rubocop:disable Metrics/ClassLength
 class StateVector
   # 状態ベクトルを保持する行列
   class Matrix
@@ -234,11 +235,15 @@ class StateVector
 
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity
   def bit_string_to_matrix(bit_string)
     kets = []
     in_paren = false
     in_paren_token = nil
 
+    # rubocop:disable Metrics/BlockLength
     bit_string.chars.each do |each|
       case each
       when '0' # |0>
@@ -290,11 +295,15 @@ class StateVector
         raise InvalidBitStringError, bits
       end
     end
+    # rubocop:enable Metrics/BlockLength
 
     raise InvalidBitStringError, bit_string if kets.empty?
 
     kets.inject(&:tensor_product)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
 
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -360,3 +369,4 @@ class StateVector
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength
