@@ -118,12 +118,6 @@ class Simulator
   end
 
   def state
-    # @state_vector の各要素を複素数に変換した配列を返す
-    # @state_vector.map do |each|
-    #   c = Complex(each)
-    #   { magnitude: (c.real**2) + (c.imag**2), phaseDeg: (Math.atan2(c.imag, c.real) / Math::PI) * 180, real: c.real,
-    #     imag: c.imag }
-    # end
     @state_vector.map do |real, imag|
       c = Complex(real, imag)
       { magnitude: (c.real**2) + (c.imag**2), phaseDeg: (Math.atan2(c.imag, c.real) / Math::PI) * 180, real: c.real,
@@ -142,7 +136,7 @@ class Simulator
       result | (1 << each)
     end
 
-    @state_vector.times_qubit_operation(gate, target_bit, control_mask, control_mask)
+    @state_vector.times_qubit_operation(gate, target_bit, control_mask)
   end
 
   def probability_zero(target_bit)

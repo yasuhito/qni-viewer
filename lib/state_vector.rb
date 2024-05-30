@@ -120,15 +120,6 @@ class StateVector
               cr3 = (cr1 * cr2) - (ci1 * ci2)
               ci3 = (cr1 * ci2) + (ci1 * cr2)
 
-              # k1 = (r1 * w1 + c1) * 2
-              # k2 = ((r2 * w2) + c2) * 2
-              # k3 = ((((r1 * h2) + r2) * w) + ((c1 * w2) + c2)) * 2
-              # cr1 = @buffer[k1]
-              # ci1 = @buffer[k1 + 1]
-              # cr2 = other.buffer[k2]
-              # ci2 = other.buffer[k2 + 1]
-              # cr3 = (cr1 * cr2) - (ci1 * ci2)
-              # ci3 = (cr1 * ci2) + (ci1 * cr2)
               new_buffer[k3] = cr3
               new_buffer[k3 + 1] = ci3
             end
@@ -139,7 +130,13 @@ class StateVector
       Matrix.new(w, h, new_buffer)
     end
 
-    def times_qubit_operation(gate, target_bit, control_mask = 0, desigred_value_mask = 0)
+    # Performs a qubit operation on the state vector.
+    #
+    # - gate The gate representing the qubit operation.
+    # - target_bit The index of the target qubit.
+    # - control_mask The control mask for controlled operations (default is 0).
+    # - desired_value_mask The desired value mask for controlled operations (default is 0).
+    def times_qubit_operation(gate, target_bit, control_mask = 0, desired_value_mask = 0)
       ar = gate[0, 0].real
       ai = gate[0, 0].imag
       br = gate[0, 1].real
@@ -152,11 +149,10 @@ class StateVector
       state_vector_length = @buffer.length / 2
 
       (0...state_vector_length).each do |row|
-        is_controlled = ((control_mask & row) ^ desigred_value_mask) != 0
+        is_controlled = ((control_mask & row) ^ desired_value_mask) != 0
         qubit_val = (row & (1 << target_bit)) != 0
 
-        next if is_controlled
-        next if qubit_val
+        next unless !is_controlled && !qubit_val
 
         i = row * 2
         j = i + ((1 << target_bit) * 2)
@@ -232,8 +228,8 @@ class StateVector
     @matrix.to_wolfram
   end
 
-  def times_qubit_operation(gate, target_bit, control_mask = 0, desigred_value_mask = 0)
-    @matrix.times_qubit_operation(gate, target_bit, control_mask, desigred_value_mask)
+  def times_qubit_operation(gate, target_bit, control_mask = 0)
+    @matrix.times_qubit_operation(gate, target_bit, control_mask, control_mask)
   end
 
   private

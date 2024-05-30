@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby -Ilib
 
-require "simulator"
-require "stackprof"
+require 'simulator'
+require 'stackprof'
 
 simulator = Simulator.new('0' * 16)
 
