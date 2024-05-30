@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'forwardable'
 require 'matrix'
 
 # 状態ベクトルとその各種操作
@@ -138,6 +139,40 @@ class StateVector
       Matrix.new(w, h, new_buffer)
     end
 
+    def times_qubit_operation(gate, target_bit, control_mask = 0, desigred_value_mask = 0)
+      ar = gate[0, 0].real
+      ai = gate[0, 0].imag
+      br = gate[0, 1].real
+      bi = gate[0, 1].imag
+      cr = gate[1, 0].real
+      ci = gate[1, 0].imag
+      dr = gate[1, 1].real
+      di = gate[1, 1].imag
+
+      state_vector_length = @buffer.length / 2
+
+      (0...state_vector_length).each do |row|
+        is_controlled = ((control_mask & row) ^ desigred_value_mask) != 0
+        qubit_val = (row & (1 << target_bit)) != 0
+
+        next if is_controlled
+        next if qubit_val
+
+        i = row * 2
+        j = i + ((1 << target_bit) * 2)
+
+        xr = @buffer[i]
+        xi = @buffer[i + 1]
+        yr = @buffer[j]
+        yi = @buffer[j + 1]
+
+        @buffer[i] = (xr * ar) - (xi * ai) + (yr * br) - (yi * bi)
+        @buffer[i + 1] = (xr * ai) + (xi * ar) + (yr * bi) + (yi * br)
+        @buffer[j] = (xr * cr) - (xi * ci) + (yr * dr) - (yi * di)
+        @buffer[j + 1] = (xr * ci) + (xi * cr) + (yr * di) + (yi * dr)
+      end
+    end
+
     def to_wolfram
       data = rows.map do |row|
         row.map(&:to_wolfram).join(', ')
@@ -193,14 +228,12 @@ class StateVector
     Math.log2(@matrix.buffer.length / 2).to_i
   end
 
-  def raw_buffer
-    @matrix.buffer
-  end
-
   def to_wolfram
     @matrix.to_wolfram
-    # items = @vector.flat_map { |each| "{#{Complex(each).to_wolfram}}" }
-    # "{#{items.join(', ')}}"
+  end
+
+  def times_qubit_operation(gate, target_bit, control_mask = 0, desigred_value_mask = 0)
+    @matrix.times_qubit_operation(gate, target_bit, control_mask, desigred_value_mask)
   end
 
   private
