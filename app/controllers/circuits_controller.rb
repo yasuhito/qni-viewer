@@ -48,7 +48,10 @@ class CircuitsController < ApplicationController
         when /^P\((.+)\)/
           @simulator.phase Regexp.last_match(1), bit
         when '•'
-          # nop
+          controls = each.map.with_index { |each, index| index if each == '•' }.compact
+          non_controls = each.map.with_index { |each, index| index unless each == '•' }.compact
+
+          @simulator.cz controls if controls.size > 1 && non_controls.empty?
         when '◦'
           # nop
         when 'Swap'

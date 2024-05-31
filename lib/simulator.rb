@@ -60,6 +60,14 @@ class Simulator
     self
   end
 
+  def cz(targets)
+    controls = targets[1..-1]
+    target_bit = targets[0]
+
+    @state_vector.apply_controlled_gate(Z, target_bit, controls)
+    self
+  end
+
   def rnot(target_bit)
     @state_vector.apply_controlled_gate(RNOT, target_bit)
     self
