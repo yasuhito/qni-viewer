@@ -61,7 +61,7 @@ class Simulator
   end
 
   def cz(targets)
-    controls = targets[1..-1]
+    controls = targets[1..]
     target_bit = targets[0]
 
     @state_vector.apply_controlled_gate(Z, target_bit, controls)

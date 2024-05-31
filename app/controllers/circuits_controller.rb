@@ -51,7 +51,7 @@ class CircuitsController < ApplicationController
           controls = each.map.with_index { |each, index| index if each == '•' }.compact
           non_controls = each.map.with_index { |each, index| index unless each == '•' }.compact
 
-          @simulator.cz controls if controls.size > 1 && non_controls.empty?
+          @simulator.cz controls if controls.first == bit && controls.size > 1 && non_controls.empty?
         when '◦'
           # nop
         when 'Swap'
