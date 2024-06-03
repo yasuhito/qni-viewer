@@ -51,6 +51,8 @@ class ComplexMatrix
     ((row * width) + col) * 2
   end
 
+  private_class_method :real_part_index
+
   attr_reader :width, :height, :buffer
 
   def initialize(width, height, buffer)
@@ -59,20 +61,26 @@ class ComplexMatrix
     @buffer = buffer
   end
 
+  private_class_method :new
+
+  # Retrieves the value at the specified row and column in the complex matrix.
   def [](row, col)
     raise 'Cell out of range' if row >= @height
+    raise 'Cell out of range' if col >= @width
 
-    ri = ComplexMatrix.real_part_index(row, col, @width)
+    ri = real_part_index(row, col)
     Complex(@buffer[ri], @buffer[ri + 1])
   end
 
+  # Sets the value of a cell in the complex matrix.
   def []=(row, col, value)
-    ri = ComplexMatrix.real_part_index(row, col, @width)
+    raise 'Cell out of range' if row >= @height
+    raise 'Cell out of range' if col >= @width
+
+    ri = real_part_index(row, col)
     @buffer[ri] = value.real
     @buffer[ri + 1] = value.imag
   end
-
-  private_class_method :new
 
   def *(other)
     case other
@@ -94,7 +102,6 @@ class ComplexMatrix
         ii = ri + 1
         Complex(new_buffer[ri], new_buffer[ii])
       end
-      # ComplexMatrix.new(@width, @height, new_buffer)
     else
       raise 'Not yet supported'
     end
@@ -207,6 +214,10 @@ class ComplexMatrix
         self[row, col]
       end
     end
+  end
+
+  def real_part_index(row, col, width = @width)
+    self.class.__send__ :real_part_index, row, col, width
   end
 end
 # rubocop:enable Metrics/ClassLength
