@@ -56,7 +56,7 @@ class ComplexMatrix
 
   private_class_method :real_part_index
 
-  attr_reader :height, :width, :buffer
+  attr_reader :height, :width
 
   def initialize(height, width, buffer)
     @height = height

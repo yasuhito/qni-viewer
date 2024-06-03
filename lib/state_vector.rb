@@ -44,7 +44,7 @@ class StateVector
   end
 
   def qubit_count
-    Math.log2(@matrix.buffer.length / 2).to_i
+    Math.log2(@matrix.height).to_i
   end
 
   def to_wolfram
