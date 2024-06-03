@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'state_vector'
-
 # Represents a matrix of complex numbers.
 #
 # The ComplexMatrix class provides methods for creating and manipulating
@@ -26,6 +24,11 @@ class ComplexMatrix
     build(1, coefs.length) do |r|
       coefs[r]
     end
+  end
+
+  # Returns a new complex matrix with all elements initialized to zero.
+  def self.zero(height, width)
+    build(width, height) { 0 }
   end
 
   # Builds a complex matrix with the specified width and height, using the
@@ -75,36 +78,31 @@ class ComplexMatrix
   # Sets the value of a cell in the complex matrix.
   def []=(row, col, value)
     raise 'Cell out of range' if row >= @height
-    raise 'Cell out of range' if col >= @width
+    raise "Cell out of range: #{col} >= width (#{@width})" if col >= @width
 
     ri = real_part_index(row, col)
     @buffer[ri] = value.real
     @buffer[ri + 1] = value.imag
   end
 
+  # Multiplies the complex matrix by a scalar or another complex matrix.
+  #
+  # TODO: Implement support for multiplying by another complex matrix.
   def *(other)
     case other
     when Numeric
-      # TODO: new_buffer ではなく ComplexMatrix.zer(@width, @height) で同じサイズのゼロ行列を作り、
-      # 新しい行列の要素を each_with_index の中でセットする
-
-      new_buffer = []
+      new_m = ComplexMatrix.zero(@height, @width)
 
       other_r = Complex(other).real
       other_i = Complex(other).imag
 
-      each do |v, index|
+      each_with_index do |v, row, col|
         new_real = (v.real * other_r) - (v.imag * other_i)
         new_imag = (v.real * other_i) + (v.imag * other_r)
-        new_buffer[index] = new_real
-        new_buffer[index + 1] = new_imag
+        new_m[row, col] = Complex(new_real, new_imag)
       end
 
-      ComplexMatrix.build(@width, @height) do |r, c|
-        ri = real_part_index(r, c)
-        ii = ri + 1
-        Complex(new_buffer[ri], new_buffer[ii])
-      end
+      new_m
     else
       raise 'Not yet supported'
     end
@@ -123,8 +121,8 @@ class ComplexMatrix
       real = @buffer[i]
       imag = @buffer[i + 1]
       element = Complex(real, imag)
-      row = i % @width
-      col = i / @width
+      row = (i / 2) / @width
+      col = (i / 2) % @width
 
       block.call element, row, col
     end
