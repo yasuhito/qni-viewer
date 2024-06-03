@@ -79,23 +79,16 @@ class Simulator
     phase = Matrix[[1, 0],
                    [0, e**(i * radian)]]
 
-    cu([], phase, target_bit)
+    cu(phase, target_bit)
   end
 
-  def cnot(target_bit, controls, anti_controls)
-    anti_controls.each do |each|
-      @state_vector.apply_controlled_gate(X, each)
-    end
-    cu controls + anti_controls, X, target_bit
-    anti_controls.each do |each|
-      @state_vector.apply_controlled_gate(X, each)
-    end
-
+  def cnot(target_bit, controls, anti_controls = [])
+    cu X, target_bit, controls, anti_controls
     self
   end
 
   def swap(target0, target1)
-    cnot(target0, [target1], []).cnot(target1, [target0], []).cnot(target0, [target1], [])
+    cnot(target0, [target1]).cnot(target1, [target0]).cnot(target0, [target1])
     self
   end
 
@@ -139,8 +132,8 @@ class Simulator
 
   private
 
-  def cu(controls, gate, target_bit)
-    @state_vector.apply_controlled_gate(gate, target_bit, controls)
+  def cu(gate, target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(gate, target_bit, controls, anti_controls)
   end
 
   def probability_zero(target_bit)

@@ -131,7 +131,16 @@ class StateVector
       Matrix.new(w, h, new_buffer)
     end
 
-    def apply_controlled_gate(gate, target_bit, control_mask = 0, desired_value_mask = 0)
+    def apply_controlled_gate(gate, target_bit, controls, anti_controls)
+      control_mask = (controls + anti_controls).reduce(0) do |result, each|
+        result | (1 << each)
+      end
+      desired_value_mask = controls.reduce(0) do |result, each|
+        result | (1 << each)
+      end
+
+      # | a b |
+      # | c d |
       ar = gate[0, 0].real
       ai = gate[0, 0].imag
       br = gate[0, 1].real
@@ -145,17 +154,18 @@ class StateVector
       target_bit_shift = 1 << target_bit
       qubit_pair_offset = target_bit_shift * 2
 
-      (0...state_vector_length).each do |row|
-        is_controlled = ((control_mask & row) ^ desired_value_mask) != 0
-        qubit_val = (row & target_bit_shift) != 0
+      (0...state_vector_length).each do |ket|
+        qubit_val = (ket & target_bit_shift) != 0
+        next if qubit_val
 
-        next if is_controlled || qubit_val
+        is_controlled = ((control_mask & ket) ^ desired_value_mask) != 0
+        next if is_controlled
 
-        i = row * 2
+        i = ket * 2
         j = i + qubit_pair_offset
 
-        xi = @buffer[i + 1]
         xr = @buffer[i]
+        xi = @buffer[i + 1]
         yr = @buffer[j]
         yi = @buffer[j + 1]
 
@@ -196,10 +206,6 @@ class StateVector
     @matrix = bit_string_to_matrix(bits)
   end
 
-  # def size
-  #   @matrix.buffer.length / 2
-  # end
-
   def amplifier(index)
     @matrix.cell(0, index)
   end
@@ -225,12 +231,8 @@ class StateVector
     @matrix.to_wolfram
   end
 
-  def apply_controlled_gate(gate, target_bit, controls = [])
-    control_mask = controls.reduce(0) do |result, each|
-      result | (1 << each)
-    end
-
-    @matrix.apply_controlled_gate(gate, target_bit, control_mask, control_mask)
+  def apply_controlled_gate(gate, target_bit, controls = [], anti_controls = [])
+    @matrix.apply_controlled_gate(gate, target_bit, controls, anti_controls)
   end
 
   private
