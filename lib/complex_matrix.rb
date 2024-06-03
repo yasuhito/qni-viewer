@@ -85,20 +85,23 @@ class ComplexMatrix
   def *(other)
     case other
     when Numeric
+      # TODO: new_buffer ではなく ComplexMatrix.zer(@width, @height) で同じサイズのゼロ行列を作り、
+      # 新しい行列の要素を each_with_index の中でセットする
+
       new_buffer = []
 
       other_r = Complex(other).real
       other_i = Complex(other).imag
 
-      each_cell do |real, imag, index|
-        new_real = (real * other_r) - (imag * other_i)
-        new_imag = (real * other_i) + (imag * other_r)
+      each do |v, index|
+        new_real = (v.real * other_r) - (v.imag * other_i)
+        new_imag = (v.real * other_i) + (v.imag * other_r)
         new_buffer[index] = new_real
         new_buffer[index + 1] = new_imag
       end
 
       ComplexMatrix.build(@width, @height) do |r, c|
-        ri = ((r * @width) + c) * 2
+        ri = real_part_index(r, c)
         ii = ri + 1
         Complex(new_buffer[ri], new_buffer[ii])
       end
@@ -107,12 +110,23 @@ class ComplexMatrix
     end
   end
 
-  # TODO: 上のメソッドに合わせて (または標準の Matrix クラスに合わせて) メソッド名を変更
-  def each_cell(&block)
+  def each(&block)
     (0...@buffer.length).step(2) do |i|
       real = @buffer[i]
       imag = @buffer[i + 1]
-      block.call real, imag, i
+      block.call Complex(real, imag), i
+    end
+  end
+
+  def each_with_index(&block)
+    (0...@buffer.length).step(2) do |i|
+      real = @buffer[i]
+      imag = @buffer[i + 1]
+      element = Complex(real, imag)
+      row = i % @width
+      col = i / @width
+
+      block.call element, row, col
     end
   end
 
