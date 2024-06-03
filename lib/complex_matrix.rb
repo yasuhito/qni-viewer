@@ -2,36 +2,32 @@
 
 require 'state_vector'
 
-# 行列
+# Represents a matrix of complex numbers.
+#
+# The ComplexMatrix class provides methods for creating and manipulating
+# matrices composed of complex numbers. It supports basic matrix operations such
+# as addition, multiplication, and tensor product. It also provides methods for
+# applying controlled gates and converting the matrix to Wolfram format.
 #
 # rubocop:disable Metrics/ClassLength
 class ComplexMatrix
+  # Creates a new ComplexMatrix object from the given rows.
   def self.[](*rows)
     width = rows[0].length
     height = rows.length
-    buf = []
 
-    0.upto(height - 1) do |r|
-      0.upto(width - 1) do |c|
-        k = ((r * width) + c) * 2 # real part index
-        v = Complex(rows[r][c])
-
-        buf[k] = v.real
-        buf[k + 1] = v.imag
-      end
+    build(width, height) do |r, c|
+      rows[r][c]
     end
-
-    new(width, height, buf)
   end
 
   def self.col(*coefs)
-    generate(1, coefs.length) do |r|
+    build(1, coefs.length) do |r|
       coefs[r]
     end
   end
 
-  # TODO: build に名前変更
-  def self.generate(width, height, &block)
+  def self.build(width, height, &block)
     buf = []
 
     0.upto(height - 1) do |r|
