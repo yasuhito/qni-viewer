@@ -3,6 +3,8 @@
 require 'state_vector'
 
 # 行列
+#
+# rubocop:disable Metrics/ClassLength
 class ComplexMatrix
   def self.[](*rows)
     width = rows[0].length
@@ -190,3 +192,4 @@ class ComplexMatrix
     "{{#{data}}}"
   end
 end
+# rubocop:enable Metrics/ClassLength
