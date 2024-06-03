@@ -1,38 +1,13 @@
 # frozen_string_literal: true
 
+require 'gate'
 require 'keisan'
-require 'matrix'
 require 'state_vector'
 require 'unicode_fraction'
 
 # 量子回路シミュレータ
-# rubocop:disable Metrics/ClassLength
 class Simulator
-  def self.i
-    Complex::I
-  end
-
-  # TODO: 適切なクラスに移動
-  H = Matrix[[1, 1],
-             [1, -1]] * UnicodeFraction('√½')
-  X = Matrix[[0, 1],
-             [1, 0]]
-  Y = Matrix[[0, -i],
-             [i, 0]]
-  Z = Matrix[[1, 0],
-             [0, -1]]
-  RNOT = Matrix[[i + 1, -i + 1],
-                [-i + 1, i + 1]] * UnicodeFraction('½')
-
   attr_reader :measured_bits
-
-  def i
-    self.class.i
-  end
-
-  def e
-    Math::E
-  end
 
   def initialize(bits)
     @bits = bits
@@ -41,22 +16,22 @@ class Simulator
   end
 
   def h(target_bit)
-    @state_vector.apply_controlled_gate(H, target_bit)
+    @state_vector.apply_controlled_gate(Gate::H, target_bit)
     self
   end
 
   def x(target_bit)
-    @state_vector.apply_controlled_gate(X, target_bit)
+    @state_vector.apply_controlled_gate(Gate::X, target_bit)
     self
   end
 
   def y(target_bit)
-    @state_vector.apply_controlled_gate(Y, target_bit)
+    @state_vector.apply_controlled_gate(Gate::Y, target_bit)
     self
   end
 
   def z(target_bit)
-    @state_vector.apply_controlled_gate(Z, target_bit)
+    @state_vector.apply_controlled_gate(Gate::Z, target_bit)
     self
   end
 
@@ -64,26 +39,24 @@ class Simulator
     controls = targets[1..]
     target_bit = targets[0]
 
-    @state_vector.apply_controlled_gate(Z, target_bit, controls)
+    @state_vector.apply_controlled_gate(Gate::Z, target_bit, controls)
     self
   end
 
   def rnot(target_bit)
-    @state_vector.apply_controlled_gate(RNOT, target_bit)
+    @state_vector.apply_controlled_gate(Gate::RNOT, target_bit)
     self
   end
 
   def phase(phi, target_bit)
     calculator = Keisan::Calculator.new
     radian = calculator.evaluate(phi.gsub('π', 'x'), x: Math::PI)
-    phase = Matrix[[1, 0],
-                   [0, e**(i * radian)]]
-
-    cu(phase, target_bit)
+    cu(Gate.phase(radian), target_bit)
   end
 
   def cnot(target_bit, controls, anti_controls = [])
-    cu X, target_bit, controls, anti_controls
+    cu Gate::X, target_bit, controls, anti_controls
+
     self
   end
 
@@ -146,4 +119,3 @@ class Simulator
     probability
   end
 end
-# rubocop:enable Metrics/ClassLength
