@@ -158,8 +158,15 @@ class ComplexMatrix
     new_m
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   def apply_controlled_gate(gate, target_bit, controls, anti_controls)
+    raise 'Not a column vector' if @width != 1
+    raise 'Not a 2x2 matrix' if gate.height != 2 || gate.width != 2
+    raise 'Target bit out of range' if 2 << target_bit > @height
+
     control_mask = (controls + anti_controls).reduce(0) do |result, each|
+      raise 'Target bit cannot be a control' if each == target_bit
+
       result | (1 << each)
     end
     desired_value_mask = controls.reduce(0) do |result, each|
@@ -177,11 +184,10 @@ class ComplexMatrix
     dr = gate[1, 1].real
     di = gate[1, 1].imag
 
-    state_vector_length = @buffer.length / 2
     target_bit_shift = 1 << target_bit
     qubit_pair_offset = target_bit_shift * 2
 
-    (0...state_vector_length).each do |ket|
+    (0...@height).each do |ket|
       qubit_val = (ket & target_bit_shift) != 0
       next if qubit_val
 
@@ -202,6 +208,7 @@ class ComplexMatrix
       @buffer[j + 1] = (xr * ci) + (xi * cr) + (yr * di) + (yi * dr)
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def to_wolfram
     data = rows.map do |row|
