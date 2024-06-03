@@ -85,6 +85,31 @@ class ComplexMatrix
     @buffer[ri + 1] = value.imag
   end
 
+  # Iterates over each element in the complex matrix.
+  def each(&block)
+    (0...@buffer.length).step(2) do |i|
+      real = @buffer[i]
+      imag = @buffer[i + 1]
+      element = Complex(real, imag)
+
+      block.call element
+    end
+  end
+
+  # Iterates over each element in the complex matrix along with its row and
+  # column index.
+  def each_with_index(&block)
+    (0...@buffer.length).step(2) do |i|
+      real = @buffer[i]
+      imag = @buffer[i + 1]
+      element = Complex(real, imag)
+      row = (i / 2) / @width
+      col = (i / 2) % @width
+
+      block.call element, row, col
+    end
+  end
+
   # Multiplies the complex matrix by a scalar or another complex matrix.
   #
   # TODO: Implement support for multiplying by another complex matrix.
@@ -108,63 +133,29 @@ class ComplexMatrix
     end
   end
 
-  def each(&block)
-    (0...@buffer.length).step(2) do |i|
-      real = @buffer[i]
-      imag = @buffer[i + 1]
-      element = Complex(real, imag)
-
-      block.call element
-    end
-  end
-
-  def each_with_index(&block)
-    (0...@buffer.length).step(2) do |i|
-      real = @buffer[i]
-      imag = @buffer[i + 1]
-      element = Complex(real, imag)
-      row = (i / 2) / @width
-      col = (i / 2) % @width
-
-      block.call element, row, col
-    end
-  end
-
+  # Performs the tensor product of the current matrix with another matrix.
   def tensor_product(other)
-    w1 = @width
-    h1 = @height
-    w2 = other.width
-    h2 = other.height
-    w = w1 * w2
-    h = h1 * h2
-    new_buffer = []
+    new_m = ComplexMatrix.zero(@height * other.height, @width * other.width)
 
-    (0...h1).each do |r1|
-      (0...h2).each do |r2|
-        (0...w1).each do |c1|
-          (0...w2).each do |c2|
-            k1 = ((r1 * w1) + c1) * 2
-            k2 = ((r2 * w2) + c2) * 2
-            k3 = ((((r1 * h2) + r2) * w) + ((c1 * w2) + c2)) * 2
+    (0...@height).each do |r1|
+      (0...other.height).each do |r2|
+        (0...@width).each do |c1|
+          (0...other.width).each do |c2|
+            k1 = ((r1 * @width) + c1) * 2
             cr1 = @buffer[k1]
             ci1 = @buffer[k1 + 1]
-            cr2 = other.buffer[k2]
-            ci2 = other.buffer[k2 + 1]
+            cr2 = other[r2, c2].real
+            ci2 = other[r2, c2].imag
             cr3 = (cr1 * cr2) - (ci1 * ci2)
             ci3 = (cr1 * ci2) + (ci1 * cr2)
 
-            new_buffer[k3] = cr3
-            new_buffer[k3 + 1] = ci3
+            new_m[(r1 * other.height) + r2, (c1 * other.width) + c2] = Complex(cr3, ci3)
           end
         end
       end
     end
 
-    ComplexMatrix.build(h, w) do |r, c|
-      ri = ((r * w) + c) * 2
-      ii = ri + 1
-      Complex(new_buffer[ri], new_buffer[ii])
-    end
+    new_m
   end
 
   def apply_controlled_gate(gate, target_bit, controls, anti_controls)
