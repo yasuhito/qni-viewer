@@ -14,26 +14,26 @@ class ComplexMatrix
     width = rows[0].length
     height = rows.length
 
-    build(width, height) do |r, c|
+    build(height, width) do |r, c|
       rows[r][c]
     end
   end
 
   # Creates a column vector from the given coefficients.
   def self.column_vector(*coefs)
-    build(1, coefs.length) do |r|
+    build(coefs.length, 1) do |r|
       coefs[r]
     end
   end
 
   # Returns a new complex matrix with all elements initialized to zero.
   def self.zero(height, width)
-    build(width, height) { 0 }
+    build(height, width) { 0 }
   end
 
   # Builds a complex matrix with the specified width and height, using the
   # provided block to generate each element.
-  def self.build(width, height, &block)
+  def self.build(height, width, &block)
     buf = []
 
     (0...height).each do |r|
@@ -47,7 +47,7 @@ class ComplexMatrix
       end
     end
 
-    new(width, height, buf)
+    new(height, width, buf)
   end
 
   def self.real_part_index(row, col, width)
@@ -56,11 +56,11 @@ class ComplexMatrix
 
   private_class_method :real_part_index
 
-  attr_reader :width, :height, :buffer
+  attr_reader :height, :width, :buffer
 
-  def initialize(width, height, buffer)
-    @width = width
+  def initialize(height, width, buffer)
     @height = height
+    @width = width
     @buffer = buffer
   end
 
@@ -112,7 +112,9 @@ class ComplexMatrix
     (0...@buffer.length).step(2) do |i|
       real = @buffer[i]
       imag = @buffer[i + 1]
-      block.call Complex(real, imag), i
+      element = Complex(real, imag)
+
+      block.call element
     end
   end
 
@@ -158,7 +160,7 @@ class ComplexMatrix
       end
     end
 
-    ComplexMatrix.build(w, h) do |r, c|
+    ComplexMatrix.build(h, w) do |r, c|
       ri = ((r * w) + c) * 2
       ii = ri + 1
       Complex(new_buffer[ri], new_buffer[ii])

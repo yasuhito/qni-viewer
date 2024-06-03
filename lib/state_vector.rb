@@ -37,9 +37,8 @@ class StateVector
 
   def map(&block)
     result = []
-    @matrix.each do |v, index|
-      result_index = index * 0.5
-      result[result_index] = block.call(v.real, v.imag)
+    @matrix.each_with_index do |v, row|
+      result[row] = block.call(v.real, v.imag)
     end
     result
   end
