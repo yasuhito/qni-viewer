@@ -21,26 +21,34 @@ class ComplexMatrix
     end
   end
 
-  def self.col(*coefs)
+  # Creates a column vector from the given coefficients.
+  def self.column_vector(*coefs)
     build(1, coefs.length) do |r|
       coefs[r]
     end
   end
 
+  # Builds a complex matrix with the specified width and height, using the
+  # provided block to generate each element.
   def self.build(width, height, &block)
     buf = []
 
-    0.upto(height - 1) do |r|
-      0.upto(width - 1) do |c|
-        k = ((r * width) + c) * 2 # real part index
+    (0...height).each do |r|
+      (0...width).each do |c|
+        ri = real_part_index(r, c, width) # real part index
+        ii = ri + 1 # imaginary part index
         v = Complex(block.call(r, c))
 
-        buf[k] = v.real
-        buf[k + 1] = v.imag
+        buf[ri] = v.real
+        buf[ii] = v.imag
       end
     end
 
     new(width, height, buf)
+  end
+
+  def self.real_part_index(row, col, width)
+    ((row * width) + col) * 2
   end
 
   attr_reader :width, :height, :buffer
@@ -51,13 +59,20 @@ class ComplexMatrix
     @buffer = buffer
   end
 
-  def rows
-    (0...@height).map do |row|
-      (0...@width).map do |col|
-        self[row, col]
-      end
-    end
+  def [](row, col)
+    raise 'Cell out of range' if row >= @height
+
+    ri = ComplexMatrix.real_part_index(row, col, @width)
+    Complex(@buffer[ri], @buffer[ri + 1])
   end
+
+  def []=(row, col, value)
+    ri = ComplexMatrix.real_part_index(row, col, @width)
+    @buffer[ri] = value.real
+    @buffer[ri + 1] = value.imag
+  end
+
+  private_class_method :new
 
   def *(other)
     case other
@@ -74,23 +89,15 @@ class ComplexMatrix
         new_buffer[index + 1] = new_imag
       end
 
-      ComplexMatrix.new(@width, @height, new_buffer)
+      ComplexMatrix.build(@width, @height) do |r, c|
+        ri = ((r * @width) + c) * 2
+        ii = ri + 1
+        Complex(new_buffer[ri], new_buffer[ii])
+      end
+      # ComplexMatrix.new(@width, @height, new_buffer)
     else
       raise 'Not yet supported'
     end
-  end
-
-  def set(col, row, value)
-    i = ((@width * row) + col) * 2
-    @buffer[i] = value.real
-    @buffer[i + 1] = value.imag
-  end
-
-  def [](row, col)
-    raise 'Cell out of range' if row >= @height
-
-    i = ((@width * row) + col) * 2
-    Complex(@buffer[i], @buffer[i + 1])
   end
 
   # TODO: 上のメソッドに合わせて (または標準の Matrix クラスに合わせて) メソッド名を変更
@@ -132,7 +139,11 @@ class ComplexMatrix
       end
     end
 
-    ComplexMatrix.new(w, h, new_buffer)
+    ComplexMatrix.build(w, h) do |r, c|
+      ri = ((r * w) + c) * 2
+      ii = ri + 1
+      Complex(new_buffer[ri], new_buffer[ii])
+    end
   end
 
   def apply_controlled_gate(gate, target_bit, controls, anti_controls)
@@ -186,6 +197,16 @@ class ComplexMatrix
     end.join('}, {')
 
     "{{#{data}}}"
+  end
+
+  private
+
+  def rows
+    (0...@height).map do |row|
+      (0...@width).map do |col|
+        self[row, col]
+      end
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength

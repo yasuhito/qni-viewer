@@ -32,7 +32,7 @@ class StateVector
   end
 
   def set_amplifier(index, value)
-    matrix.set(0, index, value)
+    matrix[index, 0] = value
   end
 
   def map(&block)
@@ -72,23 +72,23 @@ class StateVector
       when '0' # |0>
         raise InvalidBitStringError, bit_string if in_paren
 
-        kets << ComplexMatrix.col(1, 0)
+        kets << ComplexMatrix.column_vector(1, 0)
       when '1' # |1>
         raise InvalidBitStringError, bit_string if in_paren
 
-        kets << ComplexMatrix.col(0, 1)
+        kets << ComplexMatrix.column_vector(0, 1)
       when '+' # |+>
         raise InvalidBitStringError, bit_string if in_paren
 
         # FIXME: Math.sqrt(0.5) を UnicodeFraction('√½') にする
-        kets << (ComplexMatrix.col(1, 1) * Math.sqrt(0.5))
+        kets << (ComplexMatrix.column_vector(1, 1) * Math.sqrt(0.5))
       when '-' # |->
         if in_paren
           raise InvalidBitStringError, bit_string unless in_paren_token == ''
 
           in_paren_token = '-'
         else # |->
-          kets << (ComplexMatrix.col(1, -1) * Math.sqrt(0.5))
+          kets << (ComplexMatrix.column_vector(1, -1) * Math.sqrt(0.5))
           # TODO: ComplexMatrix#[] を定義して、配列から作れるようにしたほうが @buffer を隠蔽できていいかも
           # kets << Vector[sqrt(0.5), -sqrt(0.5)]
         end
@@ -98,7 +98,7 @@ class StateVector
 
           in_paren_token = '-i'
         else # |i>
-          kets << ComplexMatrix.col(Math.sqrt(0.5), Complex(0, Math.sqrt(0.5)))
+          kets << ComplexMatrix.column_vector(Math.sqrt(0.5), Complex(0, Math.sqrt(0.5)))
           # kets << Vector[sqrt(0.5), Complex(0, sqrt(0.5))]
         end
       when '('
@@ -110,7 +110,7 @@ class StateVector
         raise InvalidBitStringError, bit_string unless in_paren_token == '-i'
 
         # |-i>
-        kets << ComplexMatrix.col(Math.sqrt(0.5), Complex(0, -Math.sqrt(0.5)))
+        kets << ComplexMatrix.column_vector(Math.sqrt(0.5), Complex(0, -Math.sqrt(0.5)))
         # kets << Vector[sqrt(0.5), Complex(0, -sqrt(0.5))]
         in_paren = false
         in_paren_token = ''
