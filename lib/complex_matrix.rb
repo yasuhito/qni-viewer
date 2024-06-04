@@ -26,11 +26,6 @@ class ComplexMatrix
     end
   end
 
-  # Returns a new complex matrix with all elements initialized to zero.
-  def self.zero(height, width)
-    build(height, width) { 0 }
-  end
-
   # Builds a complex matrix with the specified width and height, using the
   # provided block to generate each element.
   def self.build(height, width, &block)
@@ -40,7 +35,11 @@ class ComplexMatrix
       (0...width).each do |c|
         ri = real_part_index(r, c, width) # real part index
         ii = ri + 1 # imaginary part index
-        v = Complex(block.call(r, c))
+        v = if block
+              Complex(block.call(r, c))
+            else
+              0
+            end
 
         buf[ri] = v.real
         buf[ii] = v.imag
@@ -116,7 +115,7 @@ class ComplexMatrix
   def *(other)
     case other
     when Numeric
-      new_m = ComplexMatrix.zero(@height, @width)
+      new_m = ComplexMatrix.build(@height, @width)
 
       other_r = Complex(other).real
       other_i = Complex(other).imag
@@ -135,7 +134,7 @@ class ComplexMatrix
 
   # Performs the tensor product of the current matrix with another matrix.
   def tensor_product(other)
-    new_m = ComplexMatrix.zero(@height * other.height, @width * other.width)
+    new_m = ComplexMatrix.build(@height * other.height, @width * other.width)
 
     (0...@height).each do |r1|
       (0...other.height).each do |r2|
