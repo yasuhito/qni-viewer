@@ -158,6 +158,8 @@ class ComplexMatrix
     new_m
   end
 
+  # Applies a controlled gate to the complex matrix.
+  #
   # rubocop:disable Metrics/PerceivedComplexity
   def apply_controlled_gate(gate, target_bit, controls, anti_controls)
     raise 'Not a column vector' if @width != 1
@@ -211,11 +213,16 @@ class ComplexMatrix
   # rubocop:enable Metrics/PerceivedComplexity
 
   def to_wolfram
+    separator = ', '
     data = rows.map do |row|
-      row.map(&:to_wolfram).join(', ')
-    end.join('}, {')
+      row.map(&:to_wolfram).join(separator)
+    end.join("}#{separator}{")
 
     "{{#{data}}}"
+  end
+
+  def to_s
+    to_wolfram
   end
 
   private
