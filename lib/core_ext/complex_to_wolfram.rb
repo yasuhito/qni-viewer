@@ -33,9 +33,8 @@ module CoreExt
     def to_wolfram_both_values(epsilon)
       separator = imag >= 0 ? '+' : '-'
       imag_factor = (imag.abs - 1).abs <= epsilon ? '' : abbreviate_float(imag.abs, epsilon)
-      prefix = real.negative? ? '' : '+'
 
-      "#{prefix + abbreviate_float(real, epsilon) + separator + imag_factor}i"
+      "#{abbreviate_float(real, epsilon) + separator + imag_factor}i"
     end
   end
 end
