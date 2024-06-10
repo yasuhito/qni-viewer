@@ -11,18 +11,21 @@
 class ComplexMatrix
   # Creates a new ComplexMatrix object from the given rows.
   def self.[](*rows)
-    width = rows[0].length
     height = rows.length
+    raise 'rows is empty' if rows.empty?
+
+    width = rows[0].length
+    raise 'rows[0] is empty' if rows[0].empty?
 
     build(height, width) do |r, c|
       rows[r][c]
     end
   end
 
-  # Creates a column vector from the given coefficients.
-  def self.column_vector(*coefs)
-    build(coefs.length, 1) do |r|
-      coefs[r]
+  # Creates a column vector from the given elements.
+  def self.column_vector(*elements)
+    build(elements.length, 1) do |r|
+      elements[r]
     end
   end
 
@@ -82,17 +85,6 @@ class ComplexMatrix
     ri = real_part_index(row, col)
     @buffer[ri] = value.real
     @buffer[ri + 1] = value.imag
-  end
-
-  # Iterates over each element in the complex matrix.
-  def each(&block)
-    (0...@buffer.length).step(2) do |i|
-      real = @buffer[i]
-      imag = @buffer[i + 1]
-      element = Complex(real, imag)
-
-      block.call element
-    end
   end
 
   # Iterates over each element in the complex matrix along with its row and
@@ -185,24 +177,26 @@ class ComplexMatrix
     dr = gate[1, 1].real
     di = gate[1, 1].imag
 
-    target_bit_shift = 1 << target_bit
-    qubit_pair_offset = target_bit_shift * 2
+    # Calculate the stride for pairing elements in the state vector
+    stride = 1 << target_bit
+    complex_stride = stride * 2
 
     (0...@height).each do |ket|
-      qubit_val = (ket & target_bit_shift) != 0
-      next if qubit_val
+      target_bit_set = (ket & stride) != 0
+      next if target_bit_set # Skip if target bit is 1
 
-      is_controlled = ((control_mask & ket) ^ desired_value_mask) != 0
-      next if is_controlled
+      meets_control_conditions = ((control_mask & ket) ^ desired_value_mask).zero?
+      next unless meets_control_conditions
 
       i = ket * 2
-      j = i + qubit_pair_offset
+      j = i + complex_stride
 
       xr = @buffer[i]
       xi = @buffer[i + 1]
       yr = @buffer[j]
       yi = @buffer[j + 1]
 
+      # Apply the gate to the elements
       @buffer[i] = (xr * ar) - (xi * ai) + (yr * br) - (yi * bi)
       @buffer[i + 1] = (xr * ai) + (xi * ar) + (yr * bi) + (yi * br)
       @buffer[j] = (xr * cr) - (xi * ci) + (yr * dr) - (yi * di)
