@@ -50,14 +50,14 @@ class Simulator
 
   def phase(phi, target_bit)
     calculator = Keisan::Calculator.new
-    radian = calculator.evaluate(phi.gsub('π', 'x').gsub("_", "/"), x: Math::PI)
+    radian = calculator.evaluate(phi.gsub('π', 'x').gsub('_', '/'), x: Math::PI)
 
     cu Gate.phase(radian), target_bit
   end
 
   def cphase(phi, target_bit, controls)
     calculator = Keisan::Calculator.new
-    radian = calculator.evaluate(phi.gsub('π', 'x').gsub("_", "/"), x: Math::PI)
+    radian = calculator.evaluate(phi.gsub('π', 'x').gsub('_', '/'), x: Math::PI)
 
     cu Gate.phase(radian), target_bit, controls
     self
