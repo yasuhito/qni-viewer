@@ -46,7 +46,14 @@ class CircuitsController < ApplicationController
         when 'Z'
           @simulator.z bit
         when /^P\((.+)\)/
-          @simulator.phase Regexp.last_match(1), bit
+          phi = Regexp.last_match(1)
+          controls = each.map.with_index { |each, index| index if each == '•' }.compact
+
+          if controls.length.positive?
+            @simulator.cphase phi, bit, controls
+          else
+            @simulator.phase phi, bit
+          end
         when '•'
           controls = each.map.with_index { |each, index| index if each == '•' }.compact
           non_controls = each.map.with_index { |each, index| index unless each == '•' }.compact
