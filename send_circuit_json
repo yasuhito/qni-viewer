@@ -24,7 +24,7 @@ begin
   request.content_type = 'application/json'
   request['Accept'] = 'application/json'
   request.body = JSON.dump({
-                             'circuit_json' => circuit_json,
+                             'circuit_json' => JSON.parse(circuit_json),
                              'step' => params[:step] ? params[:step].to_i : nil
                            })
 

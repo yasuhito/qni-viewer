@@ -21,7 +21,7 @@ class CircuitsControllerTest
       q: ┤ H ├
          └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["H"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['H']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal '√½', amplitudes[0].to_wolfram
@@ -35,7 +35,7 @@ class CircuitsControllerTest
            └───┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "H"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, 'H']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal '√½', amplitudes[0].to_wolfram
@@ -51,7 +51,7 @@ class CircuitsControllerTest
       q_1: ┤ H ├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["H", "H"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [%w[H H]] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal '½', amplitudes[0].to_wolfram
@@ -67,7 +67,7 @@ class CircuitsControllerTest
       q: ┤ X ├
          └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["X"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['X']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -81,7 +81,7 @@ class CircuitsControllerTest
            └───┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "X"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, 'X']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -97,7 +97,7 @@ class CircuitsControllerTest
       q_1: ┤ X ├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["X", "X"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [%w[X X]] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -113,7 +113,7 @@ class CircuitsControllerTest
       q: ┤ Y ├
          └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Y"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['Y']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -127,7 +127,7 @@ class CircuitsControllerTest
            └───┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "Y"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, 'Y']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -143,7 +143,7 @@ class CircuitsControllerTest
       q_1: ┤ Y ├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Y", "Y"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [%w[Y Y]] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -159,7 +159,7 @@ class CircuitsControllerTest
       q: ┤ Z ├
          └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Z"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['Z']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -171,7 +171,7 @@ class CircuitsControllerTest
       q: ┤ H ├┤ Z ├
          └───┘└───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["H"], ["Z"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['H'], ['Z']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal '√½', amplitudes[0].to_wolfram
@@ -185,7 +185,7 @@ class CircuitsControllerTest
            └───┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "Z"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, 'Z']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -201,7 +201,7 @@ class CircuitsControllerTest
       q_1: ┤ Z ├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Z", "Z"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [%w[Z Z]] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -217,7 +217,7 @@ class CircuitsControllerTest
             │
       q_1: ─■─
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["•", "•"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['•', '•']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -233,7 +233,7 @@ class CircuitsControllerTest
       q_1: ┤ H ├─■─
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["H", "H"], ["•", "•"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['H', 'H'], ['•', '•']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal '½', amplitudes[0].to_wolfram
@@ -249,7 +249,7 @@ class CircuitsControllerTest
       q: ┤ P(π/2) ├
          └────────┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["P(1.5707963267948966)"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['P(1.5707963267948966)']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -261,7 +261,7 @@ class CircuitsControllerTest
       q: ┤ P(-π/2) ├
          └─────────┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["P(-1.5707963267948966)"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['P(-1.5707963267948966)']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -273,7 +273,7 @@ class CircuitsControllerTest
       q: ┤ H ├┤ P(π/2) ├
          └───┘└────────┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["H"], ["P(1.5707963267948966)"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['H'], ['P(1.5707963267948966)']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal '√½', amplitudes[0].to_wolfram
@@ -288,7 +288,7 @@ class CircuitsControllerTest
       q_1: ┤ X ├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["•", "X"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['•', 'X']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0b00]
@@ -304,7 +304,7 @@ class CircuitsControllerTest
       q_1: ─────┤ X ├
                 └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["•", "X"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['X'], ['•', 'X']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0b00]
@@ -321,7 +321,7 @@ class CircuitsControllerTest
       q_1: ┤ X ├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["◦", "X"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['◦', 'X']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0b00]
@@ -337,7 +337,7 @@ class CircuitsControllerTest
       q_1: ─────┤ X ├
                 └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["◦", "X"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['X'], ['◦', 'X']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0b00]
@@ -354,7 +354,7 @@ class CircuitsControllerTest
            └───┘ │
       q_1: ──────X─
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["Swap", "Swap"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['X'], %w[Swap Swap]] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -369,7 +369,7 @@ class CircuitsControllerTest
       q_1: ┤ X ├─X─
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "X"], ["Swap", "Swap"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, 'X'], %w[Swap Swap]] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -385,7 +385,7 @@ class CircuitsControllerTest
       q: ┤|0>├
          └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["|0>"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['|0>']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -399,7 +399,7 @@ class CircuitsControllerTest
            └───┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "|0>"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, '|0>']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -415,7 +415,7 @@ class CircuitsControllerTest
       q_1: ┤|0>├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["|0>", "|0>"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['|0>', '|0>']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -431,7 +431,7 @@ class CircuitsControllerTest
       q: ┤|1>├
          └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["|1>"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['|1>']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -445,7 +445,7 @@ class CircuitsControllerTest
            └───┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "|1>"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, '|1>']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -461,7 +461,7 @@ class CircuitsControllerTest
       q_1: ┤|1>├
            └───┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["|1>", "|1>"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['|1>', '|1>']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 0, amplitudes[0]
@@ -477,7 +477,7 @@ class CircuitsControllerTest
       q: ┤M├
          └─┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Measure"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['Measure']] } }, as: :json
 
       assert_equal 2, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -491,7 +491,7 @@ class CircuitsControllerTest
            └─┘
       end
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [[1, "Measure"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [[1, 'Measure']] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -507,7 +507,7 @@ class CircuitsControllerTest
       q_1: ┤M├
            └─┘
     TEST
-      get circuit_path, params: { circuit_json: '{ "cols": [["Measure", "Measure"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [%w[Measure Measure]] } }, as: :json
 
       assert_equal 4, amplitudes.length
       assert_equal 1, amplitudes[0]
@@ -517,13 +517,13 @@ class CircuitsControllerTest
     end
 
     test '測定結果が 0' do
-      get circuit_path, params: { circuit_json: '{ "cols": [["Measure"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['Measure']] } }, as: :json
 
       assert_equal 0, measured_bits[0]
     end
 
     test '測定結果が 1' do
-      get circuit_path, params: { circuit_json: '{ "cols": [["X"], ["Measure"]] }' }, as: :json
+      get circuit_path, params: { circuit_json: { cols: [['X'], ['Measure']] } }, as: :json
 
       assert_equal 1, measured_bits[0]
     end
