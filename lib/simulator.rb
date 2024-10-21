@@ -53,7 +53,7 @@ class Simulator
   end
 
   def cphase(phi, target_bit, controls)
-    cu Gate.phase(radian), target_bit, controls
+    cu Gate.phase(phi), target_bit, controls
     self
   end
 
