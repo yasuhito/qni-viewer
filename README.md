@@ -6,30 +6,31 @@
 * 適当なディレクトリに qni-viewer を git clone
 * `cd qni-viewer`
 * `bundle` (依存するライブラリをインストール)
-* `./bin/rails tailwindcss:build` (CSS を生成) 
-
+* `./bin/rails tailwindcss:build` (CSS を生成)
 
 ## 使い方
 
 **シミュレータの起動 (Qni サーバの起動):**
+
 * `./bin/rails server`
 
 **量子回路の表示:**
+
 * ブラウザで `http://localhost:3000` を開いておく
 
 **量子回路の計算をリクエスト:**
+
 * 後述のフォーマットに従って量子回路の JSON を書き、適当なファイルに保存
   * 回路ファイルの例は `examples/` 以下
 * `./send_circuit_json [回路ファイル名]`
 
 または、後述するように HTTP リクエストを送信することでも `send_circuit_json` と同様のことができる。
 
-
 ## `send_circuit_json` コマンド実行例
 
 `send_circuit_json` を実行すると、実行結果の状態ベクトルの各要素 (複素数) が計算されて以下のように表示される。
 
-```
+```shell
 $ ./send_circuit_json ./examples/random_bit.json
 {"state_vector":[{"magnitude":0.0,"phaseDeg":0.0,"real":0.0,"imag":0.0},{"magnitude":1.0000000000000004,"phaseDeg":0.0,"real":1.0000000000000002,"imag":0.0}],"measured_bits":[1]}
 ```
@@ -38,14 +39,14 @@ $ ./send_circuit_json ./examples/random_bit.json
 
 `send_circuit_json` の `--step NUMBER` でステップ番号を指定すると、指定したステップでの状態ベクトルを表示できる。
 
-```
+```shell
 $ ./send_circuit_json ./examples/random_bit.json --step 1
 {"state_vector":[{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0},{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]}
 ```
 
 出力の JSON が長くて読みづらい場合、パイプで [jsonpp](https://jmhodges.github.io/jsonpp/) に通すと整形して表示できる。
 
-```
+```shell
 $ ./send_circuit_json ./examples/random_bit.json | jsonpp
 {
   "state_vector": [
@@ -76,7 +77,7 @@ HTTP リクエストの送信先 URL は `http://localhost:3000/` で、エン�
 
 実際に HTTP リクエストを送るには、`GET http://localhost:3000/` にクエリパラメータ `circuit_json` として回路を JSON エンコードした文字列を渡す。オプションパラメータとしてステップ番号 `step` を渡すこともできる。もし `step` を指定しない場合は、回路の最後 (右端) まで実行した結果を返す。
 
-###### Example JSON Request
+### Example JSON Request
 
 ``` json
 {
@@ -98,7 +99,7 @@ q: ┤|0>├┤ H ├┤M├
 ``` shell
 $ curl -H "accept: application/json" \
        -H "Content-Type: application/json" \
-       -d '{"circuit_json": "{\"cols\":[[\"|0>\"],[\"H\"],[\"Measure\"]]}", "step": 1}' \
+       -d '{"circuit_json": {"cols":[["|0>"],["H"],["Measure"]]},"step": 1}' \
        -XGET http://localhost:3000/
 {"state_vector":[{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0},{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]} 
 ```
@@ -107,13 +108,14 @@ $ curl -H "accept: application/json" \
 
 以下に、各ゲートの JSON フォーマットをゲート別に説明する。
 
-
 ## 量子回路の JSON フォーマット
 
 ### H ゲート
+
 #### 0 ビット目
 
 量子回路:
+
 ```
    ┌───┐
 q: ┤ H ├
@@ -126,6 +128,7 @@ JSON:
 #### 1 ビット目
 
 量子回路:
+
 ```
 q_0: ─────
      ┌───┐
@@ -136,8 +139,8 @@ q_1: ┤ H ├
 JSON:
 `{ "cols": [[1, "H"]] }`
 
-
 ### X ゲート
+
 #### 0 ビット目
 
 量子回路:
@@ -163,11 +166,12 @@ q_1: ┤ X ├
 JSON:
 `{ "cols": [[1, "X"]] }`
 
-
 ### Y ゲート
+
 #### 0 ビット目
 
 量子回路:
+
 ```
    ┌───┐
 q: ┤ Y ├
@@ -180,6 +184,7 @@ JSON:
 #### 1 ビット目
 
 量子回路:
+
 ```
 q_0: ─────
      ┌───┐
@@ -190,11 +195,12 @@ q_1: ┤ Y ├
 JSON:
 `{ "cols": [[1, "Y"]] }`
 
-
 ### Z ゲート
+
 #### 0 ビット目
 
 量子回路:
+
 ```
    ┌───┐
 q: ┤ Z ├
@@ -207,6 +213,7 @@ JSON:
 #### 1 ビット目
 
 量子回路:
+
 ```
 q_0: ─────
      ┌───┐
@@ -217,11 +224,12 @@ q_1: ┤ Z ├
 JSON:
 `{ "cols": [[1, "Z"]] }`
 
-
 ### Phase ゲート
+
 #### 0 ビット目
 
 量子回路:
+
 ```
    ┌────────┐
 q: ┤ P(π/2) ├
@@ -234,6 +242,7 @@ JSON:
 #### 1 ビット目
 
 量子回路:
+
 ```
                
 q_0: ──────────
