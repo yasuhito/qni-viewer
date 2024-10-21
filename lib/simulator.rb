@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'gate'
-require 'keisan'
 require 'state_vector'
 require 'unicode_fraction'
 
@@ -49,16 +48,11 @@ class Simulator
   end
 
   def phase(phi, target_bit)
-    calculator = Keisan::Calculator.new
-    radian = calculator.evaluate(phi.gsub('π', 'x').gsub('_', '/'), x: Math::PI)
-
-    cu Gate.phase(radian), target_bit
+    cu Gate.phase(phi), target_bit
+    self
   end
 
   def cphase(phi, target_bit, controls)
-    calculator = Keisan::Calculator.new
-    radian = calculator.evaluate(phi.gsub('π', 'x').gsub('_', '/'), x: Math::PI)
-
     cu Gate.phase(radian), target_bit, controls
     self
   end
