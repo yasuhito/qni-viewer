@@ -1,1 +1,1 @@
-{"cols":[["|0>"],["H"],["Measure"]]}
+{"circuit":[[{"gate": "|0>"}],[{"gate": "H"}],[{"gate": "Measure"}]]}

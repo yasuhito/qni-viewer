@@ -15,7 +15,7 @@ opt.parse!(ARGV)
 begin
   circuit_json = File.read(ARGV[0]).chomp
 
-  circuit_cols = JSON.parse(circuit_json).fetch('cols')
+  circuit_cols = JSON.parse(circuit_json).fetch('circuit')
   step = params[:step]&.to_i
   raise "Error: step #{step} is out of range." if step && (step.negative? || (step >= circuit_cols.length))
 
