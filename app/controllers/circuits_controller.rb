@@ -26,7 +26,7 @@ class CircuitsController < ApplicationController
       break if step_index > @step
 
       each.each_with_index do |gate, bit|
-        case gate.fetch("gate")
+        case gate.fetch('gate')
         when 1
           # nop
         when 'H'
