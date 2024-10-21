@@ -80,7 +80,7 @@ HTTP リクエストの送信先 URL は `http://localhost:3000/` で、エン�
 
 ``` json
 {
-  "circuit_json": "{\"circuit\":[[{\"gate\": \"|0>\"}],[{\"gate\": \"H\"}],[{\"gate\": \"Measure\"}]]}",
+  "circuit_json": "{\"circuit\":[[{\"gate\":\"|0>\"}],[{\"gate\":\"H\"}],[{\"gate\":\"Measure\"}]]}",
   "step": 1
 }
 ```
@@ -98,7 +98,7 @@ q: ┤|0>├┤ H ├┤M├
 ``` shell
 $ curl -H "accept: application/json" \
        -H "Content-Type: application/json" \
-       -d '{"circuit_json": "{\"circuit\":[[{\"gate\": \"|0>\"}],[{\"gate\": \"H\"}],[{\"gate\": \"Measure\"}]]}", "step": 1}' \
+       -d '{"circuit_json": "{\"circuit\":[[{\"gate\":\"|0>\"}],[{\"gate\":\"H\"}],[{\"gate\":\"Measure\"}]]}", "step":1}' \
        -XGET http://localhost:3000/
 {"state_vector":[{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0},{"magnitude":0.5000000000000001,"phaseDeg":0.0,"real":0.7071067811865476,"imag":0.0}],"measured_bits":[]} 
 ```
