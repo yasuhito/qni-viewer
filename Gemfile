@@ -75,8 +75,6 @@ end
 
 gem 'tailwindcss-rails', '~> 2.0'
 
-gem 'keisan', '~> 0.9.2'
-
 gem 'stackprof', '~> 0.2.26'
 
 gem 'ruby-prof', '~> 1.7'
