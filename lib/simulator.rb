@@ -42,11 +42,6 @@ class Simulator
     self
   end
 
-  def rnot(target_bit)
-    @state_vector.apply_controlled_gate(Gate::RNOT, target_bit)
-    self
-  end
-
   def phase(phi, target_bit)
     cu Gate.phase(phi), target_bit
     self
@@ -90,6 +85,20 @@ class Simulator
       end
       @measured_bits[target_bit] = 1
     end
+
+    self
+  end
+
+  def qft(target_bit, span)
+    raise "QFT with span #{span} is not supported" if span != 3
+
+    h(target_bit + 2)
+      .cphase(-Math::PI / 2, target_bit + 1, [target_bit + 2])
+      .h(target_bit + 1)
+      .cphase(-Math::PI / 4, target_bit, [target_bit + 2])
+      .cphase(-Math::PI / 2, target_bit, [target_bit + 1])
+      .h(target_bit)
+      .swap(target_bit, target_bit + 2)
 
     self
   end

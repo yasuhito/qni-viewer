@@ -9,12 +9,9 @@ class CircuitsController < ApplicationController
 
     return unless circuit_json
 
-    qubit_count = circuit_json['cols'].map(&:length).max
     @circuit_json = JSON.generate(JSON.parse(params['circuit_json'].to_unsafe_h.to_json))
-
     @step = params['step'] || (circuit_json['cols'].length - 1)
-
-    @simulator = Simulator.new('0' * qubit_count)
+    @simulator = Simulator.new('0' * qubit_count(circuit_json))
 
     circuit_json['cols'].each_with_index do |each, step_index|
       break if step_index > @step
@@ -26,6 +23,15 @@ class CircuitsController < ApplicationController
   end
 
   private
+
+  def qubit_count(circuit_json)
+    max_col_gates = circuit_json['cols'].map(&:length).max
+    max_qft_span = circuit_json['cols'].flat_map { |col| col.select { |gate| gate.to_s.match(/^QFT(\d+)/) } }
+                                       .map { |gate| gate.match(/^QFT(\d+)/)[1].to_i }
+                                       .max || 0
+
+    [max_col_gates, max_qft_span].max
+  end
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -47,8 +53,6 @@ class CircuitsController < ApplicationController
         else
           @simulator.x bit
         end
-      when 'X^½'
-        @simulator.rnot bit
       when 'Y'
         @simulator.y bit
       when 'Z'
@@ -81,6 +85,9 @@ class CircuitsController < ApplicationController
         @simulator.write 1, bit
       when 'Measure'
         @simulator.measure bit
+      when /^QFT(\d+)/
+        span = Regexp.last_match(1).to_i
+        @simulator.qft(bit, span)
       else
         raise "Unknown gate: #{gate}"
       end
