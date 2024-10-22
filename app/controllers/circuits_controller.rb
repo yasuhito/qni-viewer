@@ -26,11 +26,26 @@ class CircuitsController < ApplicationController
 
   def qubit_count(circuit_json)
     max_col_gates = circuit_json['cols'].map(&:length).max
-    max_qft_span = circuit_json['cols'].flat_map { |col| col.select { |gate| gate.to_s.match(/^QFT(\d+)/) } }
-                                       .map { |gate| gate.match(/^QFT(\d+)/)[1].to_i }
-                                       .max || 0
+    max_qft_span = max_qft_span(circuit_json)
+    max_oracle_span = max_oracle_span(circuit_json)
 
-    [max_col_gates, max_qft_span].max
+    [max_col_gates, max_qft_span, max_oracle_span].max
+  end
+
+  def max_qft_span(circuit_json)
+    circuit_json['cols'].each_with_object([]) do |col, spans|
+      col.each do |gate|
+        spans << gate.match(/^QFT(\d+)/)[1].to_i if gate.to_s.match(/^QFT(\d+)/)
+      end
+    end.max || 0
+  end
+
+  def max_oracle_span(circuit_json)
+    circuit_json['cols'].each_with_object([]) do |col, spans|
+      col.each do |gate|
+        spans << gate.match(/^Oracle(\d+)/)[1].to_i if gate.to_s.match(/^Oracle(\d+)/)
+      end
+    end.max || 0
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -88,6 +103,9 @@ class CircuitsController < ApplicationController
       when /^QFT(\d+)/
         span = Regexp.last_match(1).to_i
         @simulator.qft(bit, span)
+      when /^Oracle(\d+)/
+        span = Regexp.last_match(1).to_i
+        @simulator.oracle(bit, span)
       else
         raise "Unknown gate: #{gate}"
       end

@@ -528,15 +528,7 @@ class CircuitsControllerTest
       assert_equal 1, measured_bits[0]
     end
 
-    test <<~TEST do
-           ┌─┐
-      q_0: ┤ ├
-           |Q|
-      q_1: ┤F├
-           |T|
-      q_2: ┤ ├
-           └─┘
-    TEST
+    test 'QFT3' do
       get circuit_path, params: { circuit_json: { cols: [['QFT3']] } }, as: :json
 
       assert_equal 8, amplitudes.length
@@ -548,6 +540,20 @@ class CircuitsControllerTest
       assert_equal '√⅛', amplitudes[5].to_wolfram
       assert_equal '√⅛', amplitudes[6].to_wolfram
       assert_equal '√⅛', amplitudes[7].to_wolfram
+    end
+
+    test 'Oracle3' do
+      get circuit_path, params: { circuit_json: { cols: [['Oracle3']] } }, as: :json
+
+      assert_equal 8, amplitudes.length
+      assert_equal '¾', amplitudes[0].to_wolfram
+      assert_equal '-¼', amplitudes[1].to_wolfram
+      assert_equal '-¼', amplitudes[2].to_wolfram
+      assert_equal '-¼', amplitudes[3].to_wolfram
+      assert_equal '-¼', amplitudes[4].to_wolfram
+      assert_equal '-¼', amplitudes[5].to_wolfram
+      assert_equal '-¼', amplitudes[6].to_wolfram
+      assert_equal '-¼', amplitudes[7].to_wolfram
     end
   end
 end

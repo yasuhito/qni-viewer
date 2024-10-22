@@ -5,6 +5,8 @@ require 'state_vector'
 require 'unicode_fraction'
 
 # 量子回路シミュレータ
+#
+# rubocop:disable Metrics/ClassLength
 class Simulator
   attr_reader :measured_bits
 
@@ -90,6 +92,7 @@ class Simulator
   end
 
   def qft(target_bit, span)
+    raise "QFT with target_bit #{target_bit} is not supported" if target_bit != 0
     raise "QFT with span #{span} is not supported" if span != 3
 
     h(target_bit + 2)
@@ -99,6 +102,19 @@ class Simulator
       .cphase(-Math::PI / 2, target_bit, [target_bit + 1])
       .h(target_bit)
       .swap(target_bit, target_bit + 2)
+
+    self
+  end
+
+  def oracle(target_bit, span)
+    raise "Oracle with target_bit #{target_bit} is not supported" if target_bit != 0
+    raise "Oracle with span #{span} is not supported" if span != 3
+
+    h(0).h(1).h(2)
+        .x(0).x(1).x(2)
+        .cz([0, 1, 2])
+        .x(0).x(1).x(2)
+        .h(0).h(1).h(2)
 
     self
   end
@@ -131,3 +147,4 @@ class Simulator
     probability
   end
 end
+# rubocop:enable Metrics/ClassLength
