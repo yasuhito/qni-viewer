@@ -6,7 +6,9 @@ class CircuitJsonBroadcastJob < ApplicationJob
 
   def perform(data)
     ActionCable.server.broadcast 'circuit_channel',
-                                 { circuit_json: data[:circuit_json], step: data[:step],
+                                 { circuit_json: data[:circuit_json],
+                                   modified_circuit_json: data[:modified_circuit_json],
+                                   step: data[:step],
                                    state_vector: data[:state_vector] }
   end
 end

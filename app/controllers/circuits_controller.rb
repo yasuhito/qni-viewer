@@ -3,6 +3,8 @@
 require 'simulator'
 
 # コマンドラインで受け取った回路の JSON を表示し、ブラウザへプッシュ
+#
+# rubocop:disable Metrics/ClassLength
 class CircuitsController < ApplicationController
   def show
     circuit_json = params['circuit_json']
@@ -18,11 +20,30 @@ class CircuitsController < ApplicationController
 
       execute_step(each)
     end
-    CircuitJsonBroadcastJob.perform_now({ circuit_json: @circuit_json, step: @step,
-                                          state_vector: @simulator.state })
+
+    CircuitJsonBroadcastJob.perform_now({
+                                          circuit_json: @circuit_json,
+                                          modified_circuit_json: modify_circuit_json(@circuit_json),
+                                          step: @step,
+                                          state_vector: @simulator.state
+                                        })
   end
 
   private
+
+  def modify_circuit_json(circuit_json)
+    parsed_circuit = JSON.parse(circuit_json)
+    parsed_circuit['cols'].map! do |col|
+      if col == ['Oracle3']
+        %w[Bloch Bloch Bloch]
+      elsif col.empty?
+        ['…', '…', '…']
+      else
+        col
+      end
+    end
+    JSON.generate(parsed_circuit)
+  end
 
   def qubit_count(circuit_json)
     max_col_gates = circuit_json['cols'].map(&:length).max
@@ -116,3 +137,4 @@ class CircuitsController < ApplicationController
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 end
+# rubocop:enable Metrics/ClassLength
