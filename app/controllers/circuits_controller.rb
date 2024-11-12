@@ -13,10 +13,10 @@ class CircuitsController < ApplicationController
 
     @circuit_json = JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json))
 
-    circuit_json['cols'] = [['|0>', '|0>', '|0>']] + circuit_json['cols']
-
+    zero_all = ActiveModel::Type::Boolean.new.cast(params.fetch(:zero_all, true))
     measure_all = ActiveModel::Type::Boolean.new.cast(params.fetch(:measure_all, true))
 
+    circuit_json['cols'] = [['|0>', '|0>', '|0>']] + circuit_json['cols'] if zero_all
     circuit_json['cols'] = circuit_json['cols'] + [%w[Measure Measure Measure]] if measure_all
 
     @step = params['step'] || (circuit_json['cols'].length - 1)
