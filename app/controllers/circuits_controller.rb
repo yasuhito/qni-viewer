@@ -20,6 +20,7 @@ class CircuitsController < ApplicationController
     circuit_json['cols'] = circuit_json['cols'] + [%w[Measure Measure Measure]] if measure_all
 
     @step = params['step'] || (circuit_json['cols'].length - 1)
+    @step += 1 if zero_all
     @simulator = Simulator.new('0' * qubit_count(circuit_json))
 
     circuit_json['cols'].each_with_index do |each, step_index|
