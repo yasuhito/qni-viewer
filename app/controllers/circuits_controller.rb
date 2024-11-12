@@ -7,13 +7,18 @@ require 'simulator'
 # rubocop:disable Metrics/ClassLength
 class CircuitsController < ApplicationController
   def show
-    circuit_json = params['circuit_json']
+    circuit_json = params['circuit_json'].dup
 
     return unless circuit_json
 
-    params['circuit_json']['cols'] = [['|0>', '|0>', '|0>']] + params['circuit_json']['cols']
+    @circuit_json = JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json))
 
-    @circuit_json = JSON.generate(JSON.parse(params['circuit_json'].to_unsafe_h.to_json))
+    circuit_json['cols'] = [['|0>', '|0>', '|0>']] + circuit_json['cols']
+
+    measure_all = ActiveModel::Type::Boolean.new.cast(params.fetch(:measure_all, true))
+
+    circuit_json['cols'] = circuit_json['cols'] + [%w[Measure Measure Measure]] if measure_all
+
     @step = params['step'] || (circuit_json['cols'].length - 1)
     @simulator = Simulator.new('0' * qubit_count(circuit_json))
 
@@ -23,9 +28,11 @@ class CircuitsController < ApplicationController
       execute_step(each)
     end
 
+    @modified_circuit_json = modify_circuit_json(JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json)))
+
     CircuitJsonBroadcastJob.perform_now({
                                           circuit_json: @circuit_json,
-                                          modified_circuit_json: modify_circuit_json(@circuit_json),
+                                          modified_circuit_json: @modified_circuit_json,
                                           step: @step,
                                           state_vector: @simulator.state
                                         })
