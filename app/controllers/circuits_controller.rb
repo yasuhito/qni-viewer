@@ -11,6 +11,8 @@ class CircuitsController < ApplicationController
 
     return unless circuit_json
 
+    params['circuit_json']['cols'] = [['|0>', '|0>', '|0>']] + params['circuit_json']['cols']
+
     @circuit_json = JSON.generate(JSON.parse(params['circuit_json'].to_unsafe_h.to_json))
     @step = params['step'] || (circuit_json['cols'].length - 1)
     @simulator = Simulator.new('0' * qubit_count(circuit_json))
@@ -33,6 +35,7 @@ class CircuitsController < ApplicationController
 
   def modify_circuit_json(circuit_json)
     parsed_circuit = JSON.parse(circuit_json)
+
     parsed_circuit['cols'].map! do |col|
       if col == ['Oracle3']
         %w[Bloch Bloch Bloch]
@@ -42,6 +45,7 @@ class CircuitsController < ApplicationController
         col
       end
     end
+
     JSON.generate(parsed_circuit)
   end
 
@@ -50,11 +54,7 @@ class CircuitsController < ApplicationController
     max_qft_span = max_qft_span(circuit_json)
     max_oracle_span = max_oracle_span(circuit_json)
 
-    max_qubit_count = [max_col_gates, max_qft_span, max_oracle_span].max
-
-    return 3 if max_qubit_count.zero?
-
-    max_qubit_count
+    [max_col_gates, max_qft_span, max_oracle_span].max
   end
 
   def max_qft_span(circuit_json)
