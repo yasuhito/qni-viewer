@@ -50,7 +50,11 @@ class CircuitsController < ApplicationController
     max_qft_span = max_qft_span(circuit_json)
     max_oracle_span = max_oracle_span(circuit_json)
 
-    [max_col_gates, max_qft_span, max_oracle_span].max
+    max_qubit_count = [max_col_gates, max_qft_span, max_oracle_span].max
+
+    return 3 if max_qubit_count.zero?
+
+    max_qubit_count
   end
 
   def max_qft_span(circuit_json)
