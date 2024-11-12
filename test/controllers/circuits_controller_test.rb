@@ -237,7 +237,8 @@ class CircuitsControllerTest
          └────────┘
     TEST
       get circuit_path,
-          params: { circuit_json: { cols: [['P(1.5707963267948966)']] }, zero_all: false, measure_all: false }, as: :json
+          params: { circuit_json: { cols: [['P(1.5707963267948966)']] }, zero_all: false, measure_all: false },
+          as: :json
 
       assert_equal 1, amplitudes[0]
       assert_equal 0, amplitudes[1]
@@ -249,7 +250,8 @@ class CircuitsControllerTest
          └─────────┘
     TEST
       get circuit_path,
-          params: { circuit_json: { cols: [['P(-1.5707963267948966)']] }, zero_all: false, measure_all: false }, as: :json
+          params: { circuit_json: { cols: [['P(-1.5707963267948966)']] }, zero_all: false, measure_all: false },
+          as: :json
 
       assert_equal 1, amplitudes[0]
       assert_equal 0, amplitudes[1]
@@ -260,7 +262,9 @@ class CircuitsControllerTest
       q: ┤ H ├┤ P(π/2) ├
          └───┘└────────┘
     TEST
-      get circuit_path, params: { circuit_json: { cols: [['H'], ['P(1.5707963267948966)']] }, zero_all: false, measure_all: false },
+      get circuit_path, params: { circuit_json: { cols: [['H'], ['P(1.5707963267948966)']] },
+                                  zero_all: false,
+                                  measure_all: false },
                         as: :json
 
       assert_equal '√½', amplitudes[0].to_wolfram
