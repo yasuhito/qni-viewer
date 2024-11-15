@@ -6,6 +6,7 @@ require 'simulator'
 #
 # rubocop:disable Metrics/ClassLength
 class CircuitsController < ApplicationController
+  # rubocop:disable Metrics/PerceivedComplexity
   def show
     circuit_json = params['circuit_json'].dup
 
@@ -21,11 +22,18 @@ class CircuitsController < ApplicationController
 
     @step = params['step'] || (circuit_json['cols'].length - 1)
     @simulator = Simulator.new('0' * qubit_count(circuit_json))
+    @connections = []
 
     circuit_json['cols'].each_with_index do |each, step_index|
-      break if step_index > @step
+      execute_step(each) if step_index <= @step
 
-      execute_step(each)
+      next unless each.include?('•')
+
+      controlled_bits = each.each_with_index.with_object([]) do |(gate, bit), arr|
+        arr << bit if gate == '•' || %w[X Z].include?(gate) || gate.to_s.match?(/^P\(/)
+      end
+
+      @connections << { step: step_index, endpoints: controlled_bits.minmax } if controlled_bits.size > 1
     end
 
     @modified_circuit_json = modify_circuit_json(JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json)))
@@ -37,6 +45,7 @@ class CircuitsController < ApplicationController
                                           state_vector: @simulator.state
                                         })
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   private
 

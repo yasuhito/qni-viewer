@@ -16,6 +16,7 @@ consumer.subscriptions.create("CircuitChannel", {
     const circuit_json = data["circuit_json"];
     const modified_circuit_json = data["modified_circuit_json"];
     const step = data["step"];
+    const connections = data["connections"];
 
     // Called when there's incoming data on the websocket for this channel
     const circuit_el = document.getElementById("circuit");

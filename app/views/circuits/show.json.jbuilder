@@ -7,3 +7,7 @@ end
 json.set! :measured_bits do
   json.array! @simulator.measured_bits
 end
+
+json.set! :connections do
+  json.array! @connections
+end
