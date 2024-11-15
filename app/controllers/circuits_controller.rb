@@ -6,12 +6,19 @@ require 'simulator'
 #
 # rubocop:disable Metrics/ClassLength
 class CircuitsController < ApplicationController
-  # rubocop:disable Metrics/PerceivedComplexity
   def show
     circuit_json = params['circuit_json'].dup
 
     return unless circuit_json
 
+    execute_simulator(circuit_json)
+    broadcast_json
+  end
+
+  private
+
+  # rubocop:disable Metrics/PerceivedComplexity
+  def execute_simulator(circuit_json)
     @circuit_json = JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json))
 
     zero_all = ActiveModel::Type::Boolean.new.cast(params.fetch(:zero_all, true))
@@ -37,7 +44,10 @@ class CircuitsController < ApplicationController
     end
 
     @modified_circuit_json = modify_circuit_json(JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json)))
+  end
+  # rubocop:enable Metrics/PerceivedComplexity
 
+  def broadcast_json
     CircuitJsonBroadcastJob.perform_now({
                                           circuit_json: @circuit_json,
                                           modified_circuit_json: @modified_circuit_json,
@@ -45,9 +55,6 @@ class CircuitsController < ApplicationController
                                           state_vector: @simulator.state
                                         })
   end
-  # rubocop:enable Metrics/PerceivedComplexity
-
-  private
 
   def modify_circuit_json(circuit_json)
     parsed_circuit = JSON.parse(circuit_json)
