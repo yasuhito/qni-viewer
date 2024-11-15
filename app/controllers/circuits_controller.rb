@@ -7,18 +7,19 @@ require 'simulator'
 # rubocop:disable Metrics/ClassLength
 class CircuitsController < ApplicationController
   def show
-    circuit_json = params['circuit_json'].dup
+    return unless params['circuit_json']
 
-    return unless circuit_json
-
+    circuit_json = extract_circuit_json
+    setup_simulator(circuit_json)
     execute_simulator(circuit_json)
-    broadcast_json
+    broadcast_json(circuit_json)
   end
 
   private
 
-  # rubocop:disable Metrics/PerceivedComplexity
-  def execute_simulator(circuit_json)
+  def extract_circuit_json
+    circuit_json = params['circuit_json'].dup
+
     @circuit_json = JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json))
 
     zero_all = ActiveModel::Type::Boolean.new.cast(params.fetch(:zero_all, true))
@@ -27,10 +28,17 @@ class CircuitsController < ApplicationController
     circuit_json['cols'] = [['|0>', '|0>', '|0>']] + circuit_json['cols'] if zero_all
     circuit_json['cols'] = circuit_json['cols'] + [%w[Measure Measure Measure]] if measure_all
 
+    circuit_json
+  end
+
+  def setup_simulator(circuit_json)
     @step = params['step'] || (circuit_json['cols'].length - 1)
     @simulator = Simulator.new('0' * qubit_count(circuit_json))
     @connections = []
+  end
 
+  # rubocop:disable Metrics/PerceivedComplexity
+  def execute_simulator(circuit_json)
     circuit_json['cols'].each_with_index do |each, step_index|
       execute_step(each) if step_index <= @step
 
@@ -42,12 +50,12 @@ class CircuitsController < ApplicationController
 
       @connections << { step: step_index, endpoints: controlled_bits.minmax } if controlled_bits.size > 1
     end
-
-    @modified_circuit_json = modify_circuit_json(JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json)))
   end
   # rubocop:enable Metrics/PerceivedComplexity
 
-  def broadcast_json
+  def broadcast_json(circuit_json)
+    @modified_circuit_json = modify_circuit_json(JSON.generate(JSON.parse(circuit_json.to_unsafe_h.to_json)))
+
     CircuitJsonBroadcastJob.perform_now({
                                           circuit_json: @circuit_json,
                                           modified_circuit_json: @modified_circuit_json,
