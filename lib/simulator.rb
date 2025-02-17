@@ -36,6 +36,21 @@ class Simulator
     self
   end
 
+  def rx(theta, target_bit)
+    @state_vector.apply_controlled_gate(Gate.rx(theta), target_bit)
+    self
+  end
+
+  def ry(theta, target_bit)
+    @state_vector.apply_controlled_gate(Gate.ry(theta), target_bit)
+    self
+  end
+
+  def rz(theta, target_bit)
+    @state_vector.apply_controlled_gate(Gate.rz(theta), target_bit)
+    self
+  end
+
   def cz(targets)
     controls = targets[1..]
     target_bit = targets[0]

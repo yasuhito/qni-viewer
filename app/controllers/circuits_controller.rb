@@ -128,6 +128,18 @@ class CircuitsController < ApplicationController
         @simulator.y bit
       when 'Z'
         @simulator.z bit
+      when /^Rx\((.+)\)/
+        theta = Regexp.last_match(1).to_f
+
+        @simulator.rx theta, bit
+      when /^Ry\((.+)\)/
+        theta = Regexp.last_match(1).to_f
+
+        @simulator.ry theta, bit
+      when /^Rz\((.+)\)/
+        theta = Regexp.last_match(1).to_f
+
+        @simulator.rz theta, bit
       when /^P\((.+)\)/
         phi = Regexp.last_match(1).to_f
         controls = step.map.with_index { |each, index| index if each == '•' }.compact

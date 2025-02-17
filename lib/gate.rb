@@ -25,6 +25,21 @@ class Gate
   RNOT = ComplexMatrix[[i + 1, -i + 1],
                        [-i + 1, i + 1]] * UnicodeFraction('½')
 
+  def self.rx(theta)
+    ComplexMatrix[[Math.cos(theta / 2), -i * Math.sin(theta / 2)],
+                  [-i * Math.sin(theta / 2), Math.cos(theta / 2)]]
+  end
+
+  def self.ry(theta)
+    ComplexMatrix[[Math.cos(theta / 2), -Math.sin(theta / 2)],
+                  [Math.sin(theta / 2), Math.cos(theta / 2)]]
+  end
+
+  def self.rz(theta)
+    ComplexMatrix[[e**(-i * theta / 2), 0],
+                  [0, e**(i * theta / 2)]]
+  end
+
   def self.phase(radian)
     ComplexMatrix[[1, 0],
                   [0, e**(i * radian)]]
