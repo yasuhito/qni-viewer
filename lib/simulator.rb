@@ -16,38 +16,50 @@ class Simulator
     @measured_bits = []
   end
 
-  def h(target_bit)
-    @state_vector.apply_controlled_gate(Gate::H, target_bit)
+  def h(target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(Gate::H, target_bit, controls, anti_controls)
     self
   end
 
-  def x(target_bit)
-    @state_vector.apply_controlled_gate(Gate::X, target_bit)
+  def x(target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(Gate::X, target_bit, controls, anti_controls)
     self
   end
 
-  def y(target_bit)
-    @state_vector.apply_controlled_gate(Gate::Y, target_bit)
+  def y(target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(Gate::Y, target_bit, controls, anti_controls)
     self
   end
 
-  def z(target_bit)
-    @state_vector.apply_controlled_gate(Gate::Z, target_bit)
+  def z(target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(Gate::Z, target_bit, controls, anti_controls)
     self
   end
 
-  def rx(theta, target_bit)
-    @state_vector.apply_controlled_gate(Gate.rx(theta), target_bit)
+  def rx(theta, target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(Gate.rx(theta), target_bit, controls, anti_controls)
     self
   end
 
-  def ry(theta, target_bit)
-    @state_vector.apply_controlled_gate(Gate.ry(theta), target_bit)
+  def ry(theta, target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(Gate.ry(theta), target_bit, controls, anti_controls)
     self
   end
 
-  def rz(theta, target_bit)
-    @state_vector.apply_controlled_gate(Gate.rz(theta), target_bit)
+  def rz(theta, target_bit, controls = [], anti_controls = [])
+    @state_vector.apply_controlled_gate(Gate.rz(theta), target_bit, controls, anti_controls)
+    self
+  end
+
+  def cnot(target_bit, controls, anti_controls = [])
+    cu Gate::X, target_bit, controls, anti_controls
+
+    self
+  end
+
+  def cy(target_bit, controls, anti_controls = [])
+    cu Gate::Y, target_bit, controls, anti_controls
+
     self
   end
 
@@ -59,19 +71,31 @@ class Simulator
     self
   end
 
-  def phase(phi, target_bit)
-    cu Gate.phase(phi), target_bit
+  def crx(theta, target_bit, controls, anti_controls = [])
+    cu Gate.rx(theta), target_bit, controls, anti_controls
+
+    self
+  end
+
+  def cry(theta, target_bit, controls, anti_controls = [])
+    cu Gate.ry(theta), target_bit, controls, anti_controls
+
+    self
+  end
+
+  def crz(theta, target_bit, controls, anti_controls = [])
+    cu Gate.rz(theta), target_bit, controls, anti_controls
+
+    self
+  end
+
+  def phase(phi, target_bit, controls = [], anti_controls = [])
+    cu Gate.phase(phi), target_bit, controls, anti_controls
     self
   end
 
   def cphase(phi, target_bit, controls)
     cu Gate.phase(phi), target_bit, controls
-    self
-  end
-
-  def cnot(target_bit, controls, anti_controls = [])
-    cu Gate::X, target_bit, controls, anti_controls
-
     self
   end
 

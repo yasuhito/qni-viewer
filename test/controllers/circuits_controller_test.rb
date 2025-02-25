@@ -56,6 +56,44 @@ class CircuitsControllerTest
       assert_equal '½', amplitudes[2].to_wolfram
       assert_equal '½', amplitudes[3].to_wolfram
     end
+
+    test <<~TEST do
+      q_0: ──■──
+           ┌─┴─┐
+      q_1: ┤ H ├
+           └───┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['•', 'H']] }, zero_all: false, measure_all: false }, as: :json
+
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
+    end
+
+    test <<~TEST do
+           ┌───┐
+      q_0: ┤ X ├──■──
+           └───┘┌─┴─┐
+      q_1: ─────┤ H ├
+                └───┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['X'], ['•', 'H']] }, zero_all: false, measure_all: false },
+                        as: :json
+
+      assert_equal 0, amplitudes[0]
+      assert_equal '√½', amplitudes[1].to_wolfram
+      assert_equal 0, amplitudes[2]
+      assert_equal '√½', amplitudes[3].to_wolfram
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 1, 'endpoints' => [0, 1] }, connections[0])
+    end
   end
 
   class XGateTest < GateTest
@@ -142,6 +180,44 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[2]
       assert_equal(-1, amplitudes[3])
     end
+
+    test <<~TEST do
+      q_0: ──■──
+           ┌─┴─┐
+      q_1: ┤ Y ├
+           └───┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['•', 'Y']] }, zero_all: false, measure_all: false }, as: :json
+
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
+    end
+
+    test <<~TEST do
+           ┌───┐
+      q_0: ┤ X ├──■──
+           └───┘┌─┴─┐
+      q_1: ─────┤ Y ├
+                └───┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['X'], ['•', 'Y']] }, zero_all: false, measure_all: false },
+                        as: :json
+
+      assert_equal 0, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 'i', amplitudes[3].to_wolfram
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 1, 'endpoints' => [0, 1] }, connections[0])
+    end
   end
 
   class ZGateTest < GateTest
@@ -173,7 +249,6 @@ class CircuitsControllerTest
            ┌───┐
       q_1: ┤ Z ├
            └───┘
-      end
     TEST
       get circuit_path, params: { circuit_json: { cols: [[1, 'Z']] }, zero_all: false, measure_all: false }, as: :json
 
@@ -197,6 +272,44 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[2]
       assert_equal 0, amplitudes[3]
     end
+
+    test <<~TEST do
+      q_0: ──■──
+           ┌─┴─┐
+      q_1: ┤ Z ├
+           └───┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['•', 'Z']] }, zero_all: false, measure_all: false }, as: :json
+
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
+    end
+
+    test <<~TEST do
+           ┌───┐
+      q_0: ┤ X ├──■──
+           └───┘┌─┴─┐
+      q_1: ─────┤ Z ├
+                └───┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['X'], ['•', 'Z']] }, zero_all: false, measure_all: false },
+                        as: :json
+
+      assert_equal 0, amplitudes[0]
+      assert_equal 1, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 1, 'endpoints' => [0, 1] }, connections[0])
+    end
   end
 
   class CzGateTest < GateTest
@@ -211,12 +324,16 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[1]
       assert_equal 0, amplitudes[2]
       assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
     end
 
     test <<~TEST do
            ┌───┐
       q_0: ┤ H ├─■─
-           ├───┤
+           ├───┤ │
       q_1: ┤ H ├─■─
            └───┘
     TEST
@@ -227,6 +344,10 @@ class CircuitsControllerTest
       assert_equal '½', amplitudes[1].to_wolfram
       assert_equal '½', amplitudes[2].to_wolfram
       assert_equal '-½', amplitudes[3].to_wolfram
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 1, 'endpoints' => [0, 1] }, connections[0])
     end
   end
 
@@ -285,6 +406,10 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[0b01]
       assert_equal 0, amplitudes[0b10]
       assert_equal 0, amplitudes[0b11]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
     end
 
     test <<~TEST do
@@ -301,6 +426,10 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[0b01]
       assert_equal 0, amplitudes[0b10]
       assert_equal 1, amplitudes[0b11]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 1, 'endpoints' => [0, 1] }, connections[0])
     end
   end
 
@@ -350,6 +479,10 @@ class CircuitsControllerTest
       assert_equal 0, amplitudes[1]
       assert_equal 1, amplitudes[2]
       assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 1, 'endpoints' => [0, 1] }, connections[0])
     end
 
     test <<~TEST do
@@ -365,6 +498,10 @@ class CircuitsControllerTest
       assert_equal 1, amplitudes[1]
       assert_equal 0, amplitudes[2]
       assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 1, 'endpoints' => [0, 1] }, connections[0])
     end
   end
 
@@ -542,6 +679,105 @@ class CircuitsControllerTest
       assert_equal '-¼', amplitudes[5].to_wolfram
       assert_equal '-¼', amplitudes[6].to_wolfram
       assert_equal '-¼', amplitudes[7].to_wolfram
+    end
+  end
+
+  class RxGateTest < GateTest
+    test <<~TEST do
+         ┌───────┐
+      q: ┤ Rx(π) ├
+         └───────┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['Rx(3.141592653589793)']] },
+                                  zero_all: false, measure_all: false }, as: :json
+
+      assert_equal '0', amplitudes[0].to_wolfram
+      assert_equal '-i', amplitudes[1].to_wolfram
+    end
+
+    test <<~TEST do
+      q_0: ──■──────
+           ┌──┴──┐
+      q_1: ┤ Rx(π) ├
+           └──────┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['•', 'Rx(3.141592653589793)']] },
+                                  zero_all: false, measure_all: false }, as: :json
+
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
+    end
+  end
+
+  class RyGateTest < GateTest
+    test <<~TEST do
+         ┌───────┐
+      q: ┤ Ry(π) ├
+         └───────┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['Ry(3.141592653589793)']] },
+                                  zero_all: false, measure_all: false }, as: :json
+
+      assert_equal '0', amplitudes[0].to_wolfram
+      assert_equal 1, amplitudes[1]
+    end
+
+    test <<~TEST do
+      q_0: ──■──────
+           ┌──┴──┐
+      q_1: ┤ Ry(π) ├
+           └──────┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['•', 'Ry(3.141592653589793)']] },
+                                  zero_all: false, measure_all: false }, as: :json
+
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
+    end
+  end
+
+  class RzGateTest < GateTest
+    test <<~TEST do
+         ┌───────┐
+      q: ┤ Rz(π) ├
+         └───────┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['Rz(3.141592653589793)']] },
+                                  zero_all: false, measure_all: false }, as: :json
+
+      assert_equal '-i', amplitudes[0].to_wolfram
+      assert_equal 0, amplitudes[1]
+    end
+
+    test <<~TEST do
+      q_0: ──■──────
+           ┌──┴──┐
+      q_1: ┤ Rz(π) ├
+           └──────┘
+    TEST
+      get circuit_path, params: { circuit_json: { cols: [['•', 'Rz(3.141592653589793)']] },
+                                  zero_all: false, measure_all: false }, as: :json
+
+      assert_equal 1, amplitudes[0]
+      assert_equal 0, amplitudes[1]
+      assert_equal 0, amplitudes[2]
+      assert_equal 0, amplitudes[3]
+
+      connections = JSON.parse(@response.body).fetch('connections')
+      assert_equal 1, connections.length
+      assert_equal({ 'step' => 0, 'endpoints' => [0, 1] }, connections[0])
     end
   end
 end

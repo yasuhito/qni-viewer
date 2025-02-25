@@ -42,13 +42,23 @@ class CircuitsController < ApplicationController
     circuit_json['cols'].each_with_index do |each, step_index|
       execute_step(each) if step_index <= @step
 
-      next unless each.include?('•')
+      # コントロールビットの接続を処理
+      if each.include?('•')
+        controlled_bits = each.each_with_index.with_object([]) do |(gate, bit), arr|
+          arr << bit if gate == '•' || controlled_gate?(gate)
+        end
 
-      controlled_bits = each.each_with_index.with_object([]) do |(gate, bit), arr|
-        arr << bit if gate == '•' || %w[X Z].include?(gate) || gate.to_s.match?(/^P\(/)
+        @connections << { step: step_index, endpoints: controlled_bits.minmax } if controlled_bits.size > 1
       end
 
-      @connections << { step: step_index, endpoints: controlled_bits.minmax } if controlled_bits.size > 1
+      # SWAPゲート間の接続を処理
+      next unless each.include?('Swap')
+
+      swap_bits = each.each_with_index.with_object([]) do |(gate, bit), arr|
+        arr << bit if gate == 'Swap'
+      end
+
+      @connections << { step: step_index, endpoints: swap_bits.minmax } if swap_bits.size == 2
     end
   end
   # rubocop:enable Metrics/PerceivedComplexity
@@ -114,43 +124,35 @@ class CircuitsController < ApplicationController
       when 1
         # nop
       when 'H'
-        @simulator.h bit
+        controls, anti_controls = extract_controls(step)
+        @simulator.h bit, controls, anti_controls
       when 'X'
-        controls = step.map.with_index { |each, index| index if each == '•' }.compact
-        anti_controls = step.map.with_index { |each, index| index if each == '◦' }.compact
-
-        if controls.length.positive? || anti_controls.length.positive?
-          @simulator.cnot bit, controls, anti_controls
-        else
-          @simulator.x bit
-        end
+        controls, anti_controls = extract_controls(step)
+        @simulator.x bit, controls, anti_controls
       when 'Y'
-        @simulator.y bit
+        controls, anti_controls = extract_controls(step)
+        @simulator.y bit, controls, anti_controls
       when 'Z'
-        @simulator.z bit
+        controls, anti_controls = extract_controls(step)
+        @simulator.z bit, controls, anti_controls
       when /^Rx\((.+)\)/
         theta = Regexp.last_match(1).to_f
-
-        @simulator.rx theta, bit
+        controls, anti_controls = extract_controls(step)
+        @simulator.rx theta, bit, controls, anti_controls
       when /^Ry\((.+)\)/
         theta = Regexp.last_match(1).to_f
-
-        @simulator.ry theta, bit
+        controls, anti_controls = extract_controls(step)
+        @simulator.ry theta, bit, controls, anti_controls
       when /^Rz\((.+)\)/
         theta = Regexp.last_match(1).to_f
-
-        @simulator.rz theta, bit
+        controls, anti_controls = extract_controls(step)
+        @simulator.rz theta, bit, controls, anti_controls
       when /^P\((.+)\)/
         phi = Regexp.last_match(1).to_f
-        controls = step.map.with_index { |each, index| index if each == '•' }.compact
-
-        if controls.length.positive?
-          @simulator.cphase phi, bit, controls
-        else
-          @simulator.phase phi, bit
-        end
+        controls, anti_controls = extract_controls(step)
+        @simulator.phase phi, bit, controls, anti_controls
       when '•'
-        controls = step.map.with_index { |each, index| index if each == '•' }.compact
+        controls, = extract_controls(step)
         non_controls = step.map.with_index { |each, index| index unless each == '•' }.compact
 
         @simulator.cz controls if controls.first == bit && controls.size > 1 && non_controls.empty?
@@ -183,5 +185,16 @@ class CircuitsController < ApplicationController
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
+
+  def extract_controls(step)
+    controls = step.map.with_index { |each, index| index if each == '•' }.compact
+    anti_controls = step.map.with_index { |each, index| index if each == '◦' }.compact
+    [controls, anti_controls]
+  end
+
+  def controlled_gate?(gate)
+    %w[H X Y Z].include?(gate) ||
+      gate.to_s.match?(/^(Rx|Ry|Rz|P)\(/)
+  end
 end
 # rubocop:enable Metrics/ClassLength
