@@ -145,9 +145,9 @@ class Simulator
     self
   end
 
-  def oracle(target_bit, span)
-    raise "Oracle with target_bit #{target_bit} is not supported" if target_bit != 0
-    raise "Oracle with span #{span} is not supported" if span != 3
+  def diffusion(target_bit, span)
+    raise "Diffusion with target_bit #{target_bit} is not supported" if target_bit != 0
+    raise "Diffusion with span #{span} is not supported" if span != 3
 
     h(0).h(1).h(2)
         .x(0).x(1).x(2)
