@@ -666,19 +666,20 @@ class CircuitsControllerTest
       assert_equal '√⅛', amplitudes[7].to_wolfram
     end
 
-    test 'Diffusion3' do
-      get circuit_path, params: { circuit_json: { cols: [['Diffusion3']] }, zero_all: false, measure_all: false },
-                        as: :json
+    test 'Oracle3' do
+      get circuit_path,
+          params: { circuit_json: { cols: [%w[H H H], ['Oracle3']] }, zero_all: false, measure_all: false },
+          as: :json
 
       assert_equal 8, amplitudes.length
-      assert_equal '¾', amplitudes[0].to_wolfram
-      assert_equal '-¼', amplitudes[1].to_wolfram
-      assert_equal '-¼', amplitudes[2].to_wolfram
-      assert_equal '-¼', amplitudes[3].to_wolfram
-      assert_equal '-¼', amplitudes[4].to_wolfram
-      assert_equal '-¼', amplitudes[5].to_wolfram
-      assert_equal '-¼', amplitudes[6].to_wolfram
-      assert_equal '-¼', amplitudes[7].to_wolfram
+      assert_equal '√⅛', amplitudes[0].to_wolfram
+      assert_equal '√⅛', amplitudes[1].to_wolfram
+      assert_equal '√⅛', amplitudes[2].to_wolfram
+      assert_equal '√⅛', amplitudes[3].to_wolfram
+      assert_equal '√⅛', amplitudes[4].to_wolfram
+      assert_equal '√⅛', amplitudes[5].to_wolfram
+      assert_equal '-√⅛', amplitudes[6].to_wolfram
+      assert_equal '√⅛', amplitudes[7].to_wolfram
     end
   end
 

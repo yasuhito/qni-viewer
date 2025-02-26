@@ -388,7 +388,7 @@ q_2: ┤ ├
 JSON:
 `{ "cols": [["QFT3"]] }`
 
-### Diffusion ゲート (グローバー)
+### Oracle ゲート (グローバー)
 
 ```text
      ┌─┐
@@ -401,4 +401,4 @@ q_2: ┤ ├
 ```
 
 JSON:
-`{ "cols": [["Diffusion3"]] }`
+`{ "cols": [["Oracle3"]] }`
