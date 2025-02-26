@@ -150,11 +150,6 @@ class Simulator
     raise "Oracle with span #{span} is not supported" if span != 3
 
     x(0).cz([0, 1, 2]).x(0)
-    # h(0).h(1).h(2)
-    #     .x(0).x(1).x(2)
-    #     .cz([0, 1, 2])
-    #     .x(0).x(1).x(2)
-    #     .h(0).h(1).h(2)
 
     self
   end
